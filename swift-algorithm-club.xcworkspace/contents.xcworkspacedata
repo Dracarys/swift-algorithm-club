@@ -1170,6 +1170,9 @@
       <FileRef
          location = "group:README.markdown">
       </FileRef>
+      <FileRef
+         location = "group:README_ZH.md">
+      </FileRef>
    </Group>
    <Group
       location = "group:Hashed Heap"
