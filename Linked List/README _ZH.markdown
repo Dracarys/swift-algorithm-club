@@ -645,11 +645,13 @@ The big difference with the enum-based version is that any modification you make
 [译者：会随着作者的补充进行更新]
 [I might fill out this section in more detail if there's a demand for it.]
 
-## 实现 Collection 协议（Conforming to the Collection protocol）
+## 遵循 Collection 协议（Conforming to the Collection protocol）
 ## Conforming to the Collection protocol
 
+遵循 Sequence 协议的类型，它所包涵的元素可以被无损地多次遍历，可以通过下标访问，并实现了 Swift 标准库中的 Collection 协议。
 Types that conform to the Sequence protocol, whose elements can be traversed multiple times, nondestructively, and accessed by indexed subscript should conform to the Collection protocol defined in Swift's Standard Library.
 
+处理数据集合时，通常需要进行数量庞大的属性访问和操作。不仅如此，对 Swift 开发者来说，它通常还允许自定义类型匹配
 Doing so grants access to a very large number of properties and operations that are common when dealing collections of data. In addition to this, it lets custom types follow the patterns that are common to Swift developers.
 
 为了实现该协议，类需要实现以下内容：
@@ -690,6 +692,7 @@ public subscript(position: Index) -> T {
 }
 ```
 
+由于集合需要自己管理索引，所以下面的实现保留了一个节点引用。同时一个tag属性用来指示节点在链中的所处位置。
 Becuase collections are responsible for managing their own indexes, the implementation below keeps a reference to a node in the list. A tag property in the index represents the position of the node in the list.
 
 ```swift
