@@ -88,7 +88,7 @@ public class LinkedListNode<T> {
 }
 ```
 
-这里运用了泛型，所以 `T` 可以表示任何你即将存储于节点中的数据类型。这里我们将以字符串为例。
+这里运用了泛型，所以 `T` 可以表示任何你即将存储于节点中的数据类型。后续都将以字符串为例。
 This is a generic type, so `T` can be any kind of data that you'd like to store in the node. We'll be using strings in the examples that follow.
 
 我们采用双向链表，每个节点都拥有一个 `next` 和一个 `previous` 指针（译者注：原文为pointer，但 swift 中实际是一个引用）。因为它可能没有下一个或者前一个节点，所以采用可选类型。（后续会逐个指出，那些在单向链表中需要改动的函数）
