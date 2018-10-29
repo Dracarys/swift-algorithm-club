@@ -1,46 +1,45 @@
-# Stack
+# 栈（Stack）
 
-> This topic has been tutorialized [here](https://www.raywenderlich.com/149213/swift-algorithm-club-swift-stack-data-structure)
+> 详细教程发表在[这里](https://www.raywenderlich.com/149213/swift-algorithm-club-swift-stack-data-structure)（译者：栈概念相对简单，所以仅简单翻译了这篇ReadMe，详细教程便不在翻译。原本该篇都不想翻译的，但原计划是翻译该仓库的所有算法文章，如果单独少一两篇会显得不完整，所以还是顺手补上。）
 
-A stack is like an array but with limited functionality. You can only *push* to add a new element to the top of the stack, *pop* to remove the element from the top, and *peek* at the top element without popping it off.
+栈类似一个功能首先的数组。仅可以将新元素从栈的顶端 *push（压入）* ，或着从顶端 *pop（弹出）* ，如果不弹出元素，那么只能看到栈顶元素。
 
-Why would you want to do this? Well, in many algorithms you want to add objects to a temporary list at some point and then pull them off this list again at a later time. Often the order in which you add and remove these objects matters.
+那为什么要这么做呢？这是因为，在众多算法问题中，经常会遇到将某些元素添加到一个临时的列表中，而后又将它们移除，且顺序不能乱的情况。
 
-A stack gives you a LIFO or last-in first-out order. The element you pushed last is the first one to come off with the next pop. (A very similar data structure, the [queue](../Queue/), is FIFO or first-in first-out.)
-
-For example, let's push a number on the stack:
+而栈恰好满足了这种后进先出（LIFO）的顺序需求。最后一个压入栈的元素也最先出被弹出。（另一个类似的数据结构是[队列(queue)](../Queue/)，它是先进先出）
+例如，压入一个数：
 
 ```swift
 stack.push(10)
 ```
 
-The stack is now `[ 10 ]`. Push the next number:
+现在栈是 `[ 10 ]`。压入下一个数：
 
 ```swift
 stack.push(3)
 ```
 
-The stack is now `[ 10, 3 ]`. Push one more number:
+此时栈是 `[ 10, 3 ]`。在压入一个数：
 
 ```swift
 stack.push(57)
 ```
 
-The stack is now `[ 10, 3, 57 ]`. Let's pop the top number off the stack:
+栈变成了 `[ 10, 3, 57 ]` 。现在我们来弹出最顶端的数：
 
 ```swift
 stack.pop()
 ```
 
-This returns `57`, because that was the most recent number we pushed. The stack is `[ 10, 3 ]` again.
+返回了  `57`，正是我们刚刚压入的数。现在栈又变成了`[ 10, 3 ]`。
 
 ```swift
 stack.pop()
 ```
 
-This returns `3`, and so on. If the stack is empty, popping returns `nil` or in some implementations it gives an error message ("stack underflow").
+这一次返回 `3`，以此类推。如果栈空了，会返回 `nil` 或者在其它一些实现中返回错误消息 "栈下溢出(stack underflow)"。
 
-A stack is easy to create in Swift. It's just a wrapper around an array that just lets you push, pop, and look at the top element of the stack:
+通过 Swift 创建栈非常简单。对数组进行封装以满足 push，pop，以及读取栈顶元素等操作即可：
 
 ```swift
 public struct Stack<T> {
@@ -68,8 +67,9 @@ public struct Stack<T> {
 }
 ```
 
-Notice that a push puts the new element at the end of the array, not the beginning. Inserting at the beginning of an array is expensive, an **O(n)** operation, because it requires all existing array elements to be shifted in memory. Adding at the end is **O(1)**; it always takes the same amount of time, regardless of the size of the array.
+注意，push 是新元素添加到数组的末尾，而不是开头。在开头插入元素是一个非常昂贵的操作，时间复杂度为 **O(n)**，之所以如此，是因为需要将数组中已有的元素在内存中做整体移动。而尾部追加的时间杂度是  **O(1)**；它总是消耗固定的时间，与数组的大小无关。
 
-Fun fact about stacks: Each time you call a function or a method, the CPU places the return address on a stack. When the function ends, the CPU uses that return address to jump back to the caller. That's why if you call too many functions -- for example in a recursive function that never ends -- you get a so-called "stack overflow" as the CPU stack has run out of space.
+有趣的栈：每次调用函数或方法，CPU都会将返回地址放入栈中。一旦抵达函数结尾，CPU 就会通过返回地址跳回到调用者。这也是为什么当你调用太多函数，例如：无限递归，会导致“栈溢出”，因为 CPU 的栈的空间已经耗尽了。
 
-*Written for Swift Algorithm Club by Matthijs Hollemans*
+*由 Matthijs Hollemans 为 Swift 算法社区撰写*
+*由 William Han 翻译*
