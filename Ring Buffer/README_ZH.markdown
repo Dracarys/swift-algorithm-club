@@ -157,7 +157,7 @@ buffer.read()   // nil
 
 当数据写入速率与数据读取速率不同时，环形缓存器也是个非常不错的选择。这种情况通常发生在文件或者网络 I/O（过程中）。此外，缓存缓冲器在（解决）高优先级线程与低优先级线程，以及其它或者系统线程间通讯时，也是一个相当好的方案。
 
-这里给出的实现不是线程安全的。它仅用来展示环形缓存器是如何工作的。要实现线程安全，一个相对直接的方案就是：通过`OSAtomicIncrement64()` 来改变读写指针，以保证同一时间只有读或写。
+这里给出的实现不是线程安全的。它仅用来展示环形缓存器是如何工作的。要实现线程安全，一个相对直接的方案就是：通过`OSAtomicIncrement64()` 来改变读写指针，以保证同一时间只有读或写。(译者：这里不够通顺，有待更新)
 The implementation given here is not thread-safe. It only serves as an example of how a ring buffer works. That said, it should be fairly straightforward to make it thread-safe for a single reader and single writer by using `OSAtomicIncrement64()` to change the read and write pointers.
 
 有一个创建真正高效环形缓冲器的技巧，就是通过操作系统的虚拟内存在不同的内存页上映射出一个相同的缓冲。有点疯狂，但如果你的高效执行环境真的需要一个环形缓存器，那么值得一试。
