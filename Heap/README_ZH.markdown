@@ -1,4 +1,4 @@
-# 堆（Heap）
+# 堆（Heap）(Unfinished)
 > 译者声明：由于本人在翻译时对堆和树的知识有欠缺（这也正是翻译的意义，帮助自己查漏补缺），导致部分翻译很不准确，尤其是专用术语，甚至是翻译错误，所以暂时不建议阅读该译文。
 > 
 > 相关教程在[这里](https://www.raywenderlich.com/160631/swift-algorithm-club-heap-and-priority-queue-data-structure)
