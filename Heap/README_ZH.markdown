@@ -1,5 +1,6 @@
 # 堆（Heap）
-
+> 译者声明：由于本人在翻译时对堆和树的知识有欠缺（这也正是翻译的意义，帮助自己查漏补缺），导致部分翻译很不准确，尤其是专用术语，甚至是翻译错误，所以暂时不建议阅读该译文。
+> 
 > 相关教程在[这里](https://www.raywenderlich.com/160631/swift-algorithm-club-heap-and-priority-queue-data-structure)
 > This topic has been tutorialized [here](https://www.raywenderlich.com/160631/swift-algorithm-club-heap-and-priority-queue-data-structure)
 
@@ -122,7 +123,7 @@ Verify for yourself that these array indices indeed correspond to the picture of
 
 > **Note:** The root node `(10)` does not have a parent because `-1` is not a valid array index. Likewise, nodes `(2)`, `(5)`, and `(1)` do not have children because those indices are greater than the array size, so we always have to make sure the indices we calculate are actually valid before we use them.
 
-在大序堆中重复调用，父节点的值必须使用大于（或等于）子节点的值。也就是说下面的（表达式）对数组中的所有索引 `i` 都必须为 true：
+在大序堆中再运行一次，父节点的值必须使用大于（或等于）子节点的值。也就是说下面的（表达式）对数组中的所有索引 `i` 都必须为 true：
 
 Recall that in a max-heap, the parent's value is always greater than (or equal to) the values of its children. This means the following must be true for all array indices `i`:
 
@@ -133,88 +134,126 @@ array[parent(i)] >= array[i]
 确认一下，例子中给出的堆是否保持了堆属性
 Verify that this heap property holds for the array from the example heap.
 
+如你所见，该方程可以使我们不通过指针也能找到相应的父节点或子节点。它比指针（对方式）相对复杂一些，权衡利弊：增加了计算量，节约了内存空间。不过幸运的是，计算够快，而且时间复杂度仅是 **O(1)** 。
 As you can see, these equations allow us to find the parent or child index for any node without the need for pointers. It is complicated than just dereferencing a pointer, but that is the tradeoff: we save memory space but pay with extra computations. Fortunately, the computations are fast and only take **O(1)** time.
+
+理解数组中索引与树中节点位置的映射关系非常重要。（例如，）这里有一个包涵4层15个节点的树：
 
 It is important to understand this relationship between array index and position in the tree. Here is a larger heap which has 15 nodes divided over four levels:
 
 ![Large heap](Images/LargeHeap.png)
 
+图中的数字并不是节点的值，而是（节点）对应在数组中的索引。下面给出了数组索引与树不同层级之间的对应（关系）；
 The numbers in this picture are not the values of the nodes but the array indices that store the nodes! Here is the array indices correspond to the different levels of the tree:
 
 ![The heap array](Images/Array.png)
 
+要想公式正确，数组中的父节点必须位于子节点之前。可以上之前的图中印证（这一点）。
 For the formulas to work, parent nodes must appear before child nodes in the array. You can see that in the above picture.
 
+注意该方案的限定条件。下图就可以不选择堆而是用不同二叉树（代替）：
 Note that this scheme has limitations. You can do the following with a regular binary tree but not with a heap:
 
 ![Impossible with a heap](Images/RegularTree.png)
+
+在当前最低层级的节点占满之前，是不可以生成新层级的，所以堆的形状始终是下面这样：
 
 You can not start a new level unless the current lowest level is completely full, so heaps always have this kind of shape:
 
 ![The shape of a heap](Images/HeapShape.png)
 
+> **Note:** 你*可以*用堆的形式去遍历一个二叉树，只是这样不仅浪费空间，而且还需要把数组中空值标记出来。（译者：因为普通的二叉树的一层未必是满的）
+
 > **Note:** You *could* emulate a regular binary tree with a heap, but it would be a waste of space, and you would need to mark array indices as being empty.
 
+突击测验！假设我们有下面这样一个数组：
 Pop quiz! Let's say we have the array:
 
 	[ 10, 14, 25, 33, 81, 82, 99 ]
+
+它是一个有效的堆吗？答案是对！一个从小到大的有序数组就是一个有效对小序堆。可以向下面这样把它画出来：
 
 Is this a valid heap? The answer is yes! A sorted array from low-to-high is a valid min-heap. We can draw this heap as follows:
 
 ![A sorted array is a valid heap](Images/SortedArray.png)
 
+由于父节点总是小于它对子节点，因此堆属性得以维系。(自己确认下，一个从大到小的的有序数组是不是一个有序的大序堆)
 The heap property holds for each node because a parent is always smaller than its children. (Verify for yourself that an array sorted from high-to-low is always a valid max-heap.)
 
+> **注意:** 不是所有的小序堆都是一个有序的数组！它是不逆的。要想把堆变为有序数组，需要用到[堆排（heap sort）](../Heap%20Sort/)
 > **Note:** But not every min-heap is necessarily a sorted array! It only works one way. To turn a heap back into a sorted array, you need to use [heap sort](../Heap%20Sort/).
 
-## More math!
+## 更多的数学（More math）!
 
+如果你很好奇，那么这里还有一些公式可以更好的表现堆的属性（特征）。你不需要理解的很透彻，但它有时却真的可以派上用场。该小节可以跳过。
 In case you are curious, here are a few more formulas that describe certain properties of a heap. You do not need to know these by heart, but they come in handy sometimes. Feel free to skip this section!
 
+树的*高度*定义了，从根部到最底部的节点一共几步，或者更公式化一点说：高度就是节点间的最大行高数。*h* 高度的堆拥有 *h+1* 层。
 The *height* of a tree is defined as the number of steps it takes to go from the root node to the lowest leaf node, or more formally: the height is the maximum number of edges between the nodes. A heap of height *h* has *h + 1* levels.
 
+下面的堆高度是 3， 所以他有 4 层：
 This heap has height 3, so it has 4 levels:
 
 ![Large heap](Images/LargeHeap.png)
 
+一个包涵 *n* 个节点的堆，其高度是 *h = floor(log2(n))*。之所以如此，是因为在添加新层之前，总是先把上一层级的节点添满。例子中有15个节点，所以它的高度是 `floor(log2(15)) = floor(3.91) = 3`。
+
 A heap with *n* nodes has height *h = floor(log2(n))*. This is because we always fill up the lowest level completely before we add a new level. The example has 15 nodes, so the height is `floor(log2(15)) = floor(3.91) = 3`.
 
+如果最底层已经填满，那么这一层包涵 *2^h* 个节点。余下的树上层包涵 *2^h - 1* 个节点。带入例子中相应的数据：最低一层有 8 个节点，恰好是 `2^3 = 8`。前面的三层共包含 7 个节点，正好等于 `2^3 - 1 = 8 - 1 = 7`。
 If the lowest level is completely full, then that level contains *2^h* nodes. The rest of the tree above it contains *2^h - 1* nodes. Fill in the numbers from the example: the lowest level has 8 nodes, which indeed is `2^3 = 8`. The first three levels contain a total of 7 nodes, i.e. `2^3 - 1 = 8 - 1 = 7`.
 
+整个堆中节点总数是 *2^(h+1) - 1*。代入例子，`2^4 - 1 = 16 - 1 = 15`。
 The total number of nodes *n* in the entire heap is therefore *2^(h+1) - 1*. In the example, `2^4 - 1 = 16 - 1 = 15`.
 
+一个高度为 *h* 含有 *n* 个元素堆，最多可以拥有  *ceil(n/2^(h+1))* 个节点。（译者：这里没懂，有待更新）
 There are at most *ceil(n/2^(h+1))* nodes of height *h* in an *n*-element heap.
 
+叶子节点在数组中的索引范围总是 *floor(n/2)* 到 *n-1*。由此我们可以快速地通过数组来构建一个堆。如有疑问，可以通过例子来验证这一结论。;-)
 The leaf nodes are always located at array indices *floor(n/2)* to *n-1*. We will make use of this fact to quickly build up the heap from an array. Verify this for the example if you don't believe it. ;-)
 
+几个简单的数学知识照亮了你的一天。（译者：这句翻译的不够好。）
 Just a few math facts to brighten your day.
 
-## What can you do with a heap?
+## 可以用堆来做什么呢（What can you do with a heap）？
+
+在插入和移除元素后，有两件基础的事必须要做，以保证堆是一个大序堆或者小序堆。
 
 There are two primitive operations necessary to make sure the heap is a valid max-heap or min-heap after you insert or remove an element:
 
+- `shiftUp()`: 如果某元素大于 (大序堆) 或小于 (小序堆) 它的父（节点）, 它就需要与父节点进行交换. 使它在整个树中上移。
 - `shiftUp()`: If the element is greater (max-heap) or smaller (min-heap) than its parent, it needs to be swapped with the parent. This makes it move up the tree.
 
+- `shiftDown()`. 如果某元素小于 (max-heap) 或大于 (min-heap) 它的父节点, 它就需要在整个树中下移。 这一操作也被称为 "堆化（heapify）".
 - `shiftDown()`. If the element is smaller (max-heap) or greater (min-heap) than its children, it needs to move down the tree. This operation is also called "heapify".
 
+上移或下移的递归时间复杂度都是 **O(log n)**。
 Shifting up or down is a recursive procedure that takes **O(log n)** time.
 
+下面是一些构建与基础操作之上的操作：
 Here are other operations that are built on primitive operations:
 
+- `insert(value)`: 在堆末端添加一个新元素，之后通过 `shiftUp()` 对堆进行修复.
 - `insert(value)`: Adds the new element to the end of the heap and then uses `shiftUp()` to fix the heap.
 
+- `remove()`: 移除并返回最大值(大序堆) or 最小值 (小序堆). 要填上由于移除元素而留下的空位，To fill up the hole left by removing the element, the very last element is moved to the root position and then `shiftDown()` fixes up the heap. (This is sometimes called "extract min" or "extract max".)
 - `remove()`: Removes and returns the maximum value (max-heap) or the minimum value (min-heap). To fill up the hole left by removing the element, the very last element is moved to the root position and then `shiftDown()` fixes up the heap. (This is sometimes called "extract min" or "extract max".)
 
 - `removeAtIndex(index)`: Just like `remove()` with the exception that it allows you to remove any item from the heap, not just the root. This calls both `shiftDown()`, in case the new element is out-of-order with its children, and `shiftUp()`, in case the element is out-of-order with its parents.
+- `removeAtIndex(index)`: Just like `remove()` with the exception that it allows you to remove any item from the heap, not just the root. This calls both `shiftDown()`, in case the new element is out-of-order with its children, and `shiftUp()`, in case the element is out-of-order with its parents.
 
+- `replace(index, value)`: Assigns a smaller (min-heap) or larger (max-heap) value to a node. Because this invalidates the heap property, it uses `shiftUp()` to patch things up. (Also called "decrease key" and "increase key".)
 - `replace(index, value)`: Assigns a smaller (min-heap) or larger (max-heap) value to a node. Because this invalidates the heap property, it uses `shiftUp()` to patch things up. (Also called "decrease key" and "increase key".)
 
 All of the above take time **O(log n)** because shifting up or down is expensive. There are also a few operations that take more time:
 
 - `search(value)`. Heaps are not built for efficient searches, but the `replace()` and `removeAtIndex()` operations require the array index of the node, so you need to find that index. Time: **O(n)**.
+- `search(value)`. Heaps are not built for efficient searches, but the `replace()` and `removeAtIndex()` operations require the array index of the node, so you need to find that index. Time: **O(n)**.
 
 - `buildHeap(array)`: Converts an (unsorted) array into a heap by repeatedly calling `insert()`. If you are smart about this, it can be done in **O(n)** time.
+- `buildHeap(array)`: Converts an (unsorted) array into a heap by repeatedly calling `insert()`. If you are smart about this, it can be done in **O(n)** time.
 
+- [堆排（Heap sort）](../Heap%20Sort/). Since the heap is an array, we can use its unique properties to sort the array from low to high. Time: **O(n lg n).**
 - [Heap sort](../Heap%20Sort/). Since the heap is an array, we can use its unique properties to sort the array from low to high. Time: **O(n lg n).**
 
 The heap also has a `peek()` function that returns the maximum (max-heap) or minimum (min-heap) element, without removing it from the heap. Time: **O(1)**.
