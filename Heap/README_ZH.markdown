@@ -130,7 +130,7 @@ Recall that in a max-heap, the parent's value is always greater than (or equal t
 array[parent(i)] >= array[i]
 ```
 
-确认一下，例子中给出的堆是否保持了堆属性。
+确认一下，例子中给出的堆是否保持了堆属性
 Verify that this heap property holds for the array from the example heap.
 
 As you can see, these equations allow us to find the parent or child index for any node without the need for pointers. It is complicated than just dereferencing a pointer, but that is the tradeoff: we save memory space but pay with extra computations. Fortunately, the computations are fast and only take **O(1)** time.
