@@ -257,7 +257,7 @@ q.count             // 1
 
 ## 参见（Also see）
 
-实现一个队列的方式还有很多。其它方案如：[链表（linked list）](../Linked%20List/)，[循环缓冲（circular buffer）](../Ring%20Buffer/)，或者[堆（heap）](../Heap/)
+实现一个队列的方式还有很多。其它方案如：[链表（linked list）](../Linked%20List/)，[循环缓冲器（circular buffer）](../Ring%20Buffer/)，或者[堆（heap）](../Heap/)
 
 此外还有变种[双端队列（deque）](../Deque/)，两端均可以执行出队和入队操作，以及[优先级队列（priority queue）](../Priority%20Queue/)，让最终重要的对象是中处于队列前端。
 
