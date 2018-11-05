@@ -1,10 +1,9 @@
-# Deque
+# 双端队列（Deque）
 
-A double-ended queue. For some reason this is pronounced as "deck".
+双端队列（Deque）。由于某些原因通常读作 "deck"。（译者：避免跟“鸡儿”的发音一样）
 
-A regular [queue](../Queue/) adds elements to the back and removes from the front. The deque also allows enqueuing at the front and dequeuing from the back, and peeking at both ends.
-
-Here is a very basic implementation of a deque in Swift:
+常规 [队列（queue）](../Queue/)允许在后端添加元素，从前端移除元素。双端队列不仅如此还支持前端入队和后端出队，以及双端查看。
+下面是一个双端堆里的 SWift 基本实现：
 
 ```swift
 public struct Deque<T> {
@@ -52,9 +51,9 @@ public struct Deque<T> {
 }
 ```
 
-This uses an array internally. Enqueuing and dequeuing are simply a matter of adding and removing items from the front or back of the array.
+这里在内部使用了数组。出队和入队就是简单地从数组前端或后端添加和移除对象。
 
-An example of how to use it in a playground:
+一个在 playground 中应用的例子：
 
 ```swift
 var deque = Deque<Int>()
@@ -70,49 +69,49 @@ deque.enqueueFront(5)
 deque.dequeue()       // 5
 ```
 
-This particular implementation of `Deque` is simple but not very efficient. Several operations are **O(n)**, notably `enqueueFront()` and `dequeue()`. I've included it only to show the principle of what a deque does.
+上面对 `Deque` 的实现比较简单，但是不够高效。除了 `enqueueFront()` 和 `dequeue()`，其它操作的时间杂度都是 **O(n)**。这里主要是为了向大家展示双端队列的工作原理。
 
-## A more efficient version
+## 高效版（A more efficient version）
 
-The reason that `dequeue()` and `enqueueFront()` are **O(n)** is that they work on the front of the array. If you remove an element at the front of an array, what happens is that all the remaining elements need to be shifted in memory.
+之所以 `dequeue()` 和 `enqueueFront()` 的时间杂度是 **O(n)**，是因为它们都是在数组的前端进行（操作）。一旦从数组前端移除一个元素，那么数组中剩余的元素在内存中都会整体向前移动。
 
-Let's say the deque's array contains the following items:
+假设双端队列的数组包含以下元素：
 
 	[ 1, 2, 3, 4 ]
 
-Then `dequeue()` will remove `1` from the array and the elements `2`, `3`, and `4`, are shifted one position to the front:
+当数组中 `dequeue()` 移除 `1` 时，那么剩余的元素 `2`, `3`, 和 `4` 都会向前移动一个位置：
 
 	[ 2, 3, 4 ]
 
-This is an **O(n)** operation because all array elements need to be moved by one position in the computer's memory.
+由于所有元素在内存中都必须向前移动一个位置，所以这是一个 **O(n)** 操作。
 
-Likewise, inserting an element at the front of the array is expensive because it requires that all other elements must be shifted one position to the back. So `enqueueFront(5)` will change the array to be:
+同理，在数组前端插入一个元素同样昂贵，因为数组中已有元素必须全部向后移动一个位置。`enqueueFront(5)` 后的数组如下：
 
 	[ 5, 2, 3, 4 ]
 
-First, the elements `2`, `3`, and `4` are moved up by one position in the computer's memory, and then the new element `5` is inserted at the position where `2` used to be.
+首先，元素 `2`, `3`, 和 `4` 会在内存中会移动一个位置，之后在将新元素 `5` 插入到原来 `2` 的位置。
 
-Why is this not an issue at for `enqueue()` and `dequeueBack()`? Well, these operations are performed at the end of the array. The way resizable arrays are implemented in Swift is by reserving a certain amount of free space at the back.
+那么为什么 `enqueue()` 和 `dequeueBack()` 就不存在这个问题呢？这是因为这些操作恰好是在数组后端执行的。Swift 中的数组在末尾保留了一定的空闲空间。
 
-Our initial array `[ 1, 2, 3, 4]` actually looks like this in memory:
+我们初始化的数组 `[ 1, 2, 3, 4]` 其在内存中实际类似于下面这样：
 
 	[ 1, 2, 3, 4, x, x, x ]
 
-where the `x`s denote additional positions in the array that are not being used yet. Calling `enqueue(6)` simply copies the new item into the next unused spot:
+其中的 `x` 表示数组中的额外空闲位置。此时调用 `enqueue(6)` ，只是将新对象拷贝到紧邻的下一个空位而已：
 
 	[ 1, 2, 3, 4, 6, x, x ]
 
-The `dequeueBack()` function uses `array.removeLast()` to delete that item. This does not shrink the array's memory but only decrements `array.count` by one. There are no expensive memory copies involved here. So operations at the back of the array are fast, **O(1)**.
+而 `dequeueBack()` 方法是通过 `array.removeLast()` 来删除对象的。它仅仅是将 `array.count` 减去一，不会减小数组的实际内存空间。由于没有昂贵的内存拷贝需求，所以在数组尾端的操作都非常之快， **O(1)**。
 
-It is possible the array runs out of free spots at the back. In that case, Swift will allocate a new, larger array and copy over all the data. This is an **O(n)** operation but because it only happens once in a while, adding new elements at the end of an array is still **O(1)** on average.
+数组是有可能耗尽末尾的空闲内存的。此时 Swift 会开辟一块新的内存，并将原来所有的数据拷贝到新数组中。这虽然是一个 **O(n)** 操作，但是由于在一段时间内仅会发生一次，所以平均下来，在数组末尾添加元素的时间杂度仍然是  **O(1)**。 
 
-Of course, we can use this same trick at the *beginning* of the array. That will make our deque efficient too for operations at the front of the queue. Our array will look like this:
+当然，我们也可以将这个技巧应用到数组的 *前端（beginning）* ，以便双端队列的前端操作更加高效。这时的数组看起来是这样的：
 
 	[ x, x, x, 1, 2, 3, 4, x, x, x ]
 
-There is now also a chunk of free space at the start of the array, which allows adding or removing elements at the front of the queue to be **O(1)** as well.
+这样数组前端也有了一大块空闲空间，再在前端进行添加或移除操作的时间杂度也将是 **O(1)**。
 
-Here is the new version of `Deque`:
+下面是新版的 `Deque`：
 
 ```swift
 public struct Deque<T> {
@@ -174,31 +173,30 @@ public struct Deque<T> {
 }
 ```
 
-It still largely looks the same -- `enqueue()` and `dequeueBack()` haven't changed -- but there are also a few important differences. The array now stores objects of type `T?` instead of just `T` because we need some way to mark array elements as being empty.
+变化不大， `enqueue()` 和 `dequeueBack()` 甚至都没改。其中最关键的变化是，数组的存储类型从 `T` 变成了 `T?`。因为需要将数组的元素标记为空。
 
-The `init` method allocates a new array that contains a certain number of `nil` values. This is the free room we have to work with at the beginning of the array. By default this creates 10 empty spots.
+ `init` 会初始化一个包涵了若干 `nil` 值的数组。默认的参数 10 正是我们在数组前端所预留的空位。
 
-The `head` variable is the index in the array of the front-most object. Since the queue is currently empty, `head` points at an index beyond the end of the array.
+ `head` 变量用来标识数组真实的起始索引。队列当前为空，`head` 指向了一个越界的数组索引位置。
 
 	[ x, x, x, x, x, x, x, x, x, x ]
 	                                 |
 	                                 head
-
-To enqueue an object at the front, we move `head` one position to the left and then copy the new object into the array at index `head`. For example, `enqueueFront(5)` gives:
+每当需要在前端入队时，我们就将 `head` 向左移动一位并将新的对象拷贝到数组的 `head` 索引位。`enqueueFront(5)` 如下：
 
 	[ x, x, x, x, x, x, x, x, x, 5 ]
 	                             |
 	                             head
 
-Followed by `enqueueFront(7)`:
+紧接着 `enqueueFront(7)`：
 
 	[ x, x, x, x, x, x, x, x, 7, 5 ]
 	                          |
 	                          head
 
-And so on... the `head` keeps moving to the left and always points at the first item in the queue. `enqueueFront()` is now **O(1)** because it only involves copying a value into the array, a constant-time operation.
+依此类推， `head` 继续向左移动并始终指向队列中的第一个元素。由于仅需向数组中拷入新值，所以`enqueueFront()` 的操作耗时是一个常数，**O(1)**。
 
-Here is the code:
+代码如下：
 
 ```swift
   public mutating func enqueueFront(element: T) {
@@ -207,21 +205,21 @@ Here is the code:
   }
 ```
 
-Appending to the back of the queue has not changed (it's the exact same code as before). For example, `enqueue(1)` gives:
+在队尾添加元素没什么变化（与之前的代码实现相同）。例如，`enqueue(1)` ：
 
 	[ x, x, x, x, x, x, x, x, 7, 5, 1, x, x, x, x, x, x, x, x, x ]
 	                          |
 	                          head
 
-Notice how the array has resized itself. There was no room to add the `1`, so Swift decided to make the array larger and add a number of empty spots to the end. If you enqueue another object, it gets added to the next empty spot in the back. For example, `enqueue(2)`:
+注意数组是如何进行扩容的。当发现已经没空位放值 `1` 时，Swift 会将创建一个更大的数组并在末尾添加一定量的空位。如果此时再次入队一个对象，它将被添加到下一个紧邻的空位中，例如， `enqueue(2)`：
 
 	[ x, x, x, x, x, x, x, x, 7, 5, 1, 2, x, x, x, x, x, x, x, x ]
 	                          |
 	                          head
 
-> **Note:** You won't see those empty spots at the back of the array when you `print(deque.array)`. This is because Swift hides them from you. Only the ones at the front of the array show up.
+> **注意：** 当你调用 `print(deque.array)` 时，是看不见这些空位的。这是因为 Swift 为你隐藏了它们，只有前面（我们）添加的会被打印出来。
 
-The `dequeue()` method does the opposite of `enqueueFront()`, it reads the value at `head`, sets the array element back to `nil`, and then moves `head` one position to the right:
+ `dequeue()` 方法恰好与 `enqueueFront()` 相反，它从 `head` 读取一个值，并其重设为 `nil` ，之后在将 `head` 向右移动一位：
 
 ```swift
   public mutating func dequeue() -> T? {
@@ -234,7 +232,7 @@ The `dequeue()` method does the opposite of `enqueueFront()`, it reads the value
   }
 ```
 
-There is one tiny problem... If you enqueue a lot of objects at the front, you're going to run out of empty spots at the front at some point. When this happens at the back of the array, Swift automatically resizes it. But at the front of the array we have to handle this situation ourselves, with some extra logic in `enqueueFront()`:
+还有一点小问题。。。如果在前端插入大量对象，那么前端预留的空位就可能会耗光。当这种情况发生在后端时，Swift 会自动为我们扩容。但是在前端我们就必须自己手动处理了，在 `enqueueFront()` 添加一些额外的处理逻辑：
 
 ```swift
   public mutating func enqueueFront(element: T) {
@@ -250,17 +248,17 @@ There is one tiny problem... If you enqueue a lot of objects at the front, you'r
   }
 ```
 
-If `head` equals 0, there is no room left at the front. When that happens, we add a whole bunch of new `nil` elements to the array. This is an **O(n)** operation but since this cost gets divided over all the `enqueueFront()`s, each individual call to `enqueueFront()` is still **O(1)** on average.
+如果 `head` 等于 0，前端已经没有空闲空间。此时我们就在数组（前端插入）一定量的 `nil`。虽然这是一个 **O(n)** 操作，但是将其耗时均摊到所有的 `enqueueFront()` 操作中，那么平均下来每次的 `enqueueFront()`  的时间杂度仍是 **O(1)**。
 
-> **Note:** We also multiply the capacity by 2 each time this happens, so if your queue grows bigger and bigger, the resizing happens less often. This is also what Swift arrays automatically do at the back.
+> **注意:** 每次我们都将容量扩充一倍，因此队列会变的越来越大，随之扩容发生的频率也会越来越低。这也是为什么 Swift 数组会自动在后台（扩容）的原因。（译者：可以自行查看Swift[数组源码（Array.swift）](https://github.com/apple/swift/blob/master/stdlib/public/core/Array.swift)）
 
-We have to do something similar for `dequeue()`. If you mostly enqueue a lot of elements at the back and mostly dequeue from the front, then you may end up with an array that looks as follows:
+同样我们也比对 `dequeue()` 进行相应处理。如果你总是在队尾入队，队首出队，如此操作大量元素之后，那么数组可会呈现如下样式：
 
 	[ x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, 1, 2, 3 ]
 	                                                              |
 	                                                              head
 
-Those empty spots at the front only get used when you call `enqueueFront()`. But if enqueuing objects at the front happens only rarely, this leaves a lot of wasted space. So let's add some code to `dequeue()` to clean this up:
+队首空位只有在调用 `enqueueFront()` 时才会被使用。但如果很少在队首入队，那么就会导致浪费大量内存空间。所以我们来添加一些代码在出队时将（多余的）空位清理掉：
 
 ```swift
   public mutating func dequeue() -> T? {
@@ -279,31 +277,33 @@ Those empty spots at the front only get used when you call `enqueueFront()`. But
   }
 ```
 
-Recall that `capacity` is the original number of empty places at the front of the queue. If the `head` has advanced more to the right than twice the capacity, then it's time to trim off a bunch of these empty spots. We reduce it to about 25%.
+回想一下， `capacity` 是我们在队首预留的空位数。如果 `head` 已经向右超过了该数值的两倍，那么就触发空位裁切。将其裁剪到 25%。
 
-> **Note:**  The deque will keep at least its original capacity by comparing `capacity` to `originalCapacity`.
+> **注意：** 队列会比较 `capacity` 和 `originalCapacity`，以保证（裁切后的）空位不少于初始。
 
-For example, this:
+例如下面这样:
 
 	[ x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, x, 1, 2, 3 ]
 	                                |                             |
 	                                capacity                      head
 
-becomes after trimming:
+裁切后:
 
 	[ x, x, x, x, x, 1, 2, 3 ]
 	                 |
 	                 head
 	                 capacity
 
-This way we can strike a balance between fast enqueuing and dequeuing at the front and keeping the memory requirements reasonable.
+如此我们就可以在前端出入队和内存有效控制中取得一个平衡。
 
-> **Note:** We don't perform trimming on very small arrays. It's not worth it for saving just a few bytes of memory.
+> **注意：** 太小对数组不会进行裁切，节省几个比特的内存没必要。
 
-## See also
+## 参见（See also）
 
-Other ways to implement deque are by using a [doubly linked list](../Linked%20List/), a [circular buffer](../Ring%20Buffer/), or two [stacks](../Stack/) facing opposite directions.
+此外队列还可以通过[双链表（doubly linked list）](../Linked%20List/), [环形缓冲器（circular buffer）](../Ring%20Buffer/)或者一对反向[栈（stacks）](../Stack/)来实现。
 
-[A fully-featured deque implementation in Swift](https://github.com/lorentey/Deque)
+[完整的SWift双端队列实现](https://github.com/lorentey/Deque)
 
-*Written for Swift Algorithm Club by Matthijs Hollemans*
+*由 Matthijs Hollemans 发表于 Swift 算法社区*
+
+*由 William Han 翻译*
