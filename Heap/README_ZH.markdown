@@ -65,7 +65,7 @@ A heap is not a replacement for a binary search tree, and there are similarities
 
 **Balancing.** A binary search tree must be "balanced" so that most operations have **O(log n)** performance. You can either insert and delete your data in a random order or use something like an [AVL tree](../AVL%20Tree/) or [red-black tree](../Red-Black%20Tree/), but with heaps we don't actually need the entire tree to be sorted. We just want the heap property to be fulfilled, so balancing isn't an issue. Because of the way the heap is structured, heaps can guarantee **O(log n)** performance.
 
-**查询特性** 二叉树对搜索很快，堆较慢。相对于堆前端的最大值（最小值），以及允许快速插入和删除等特性，查询的优先级则不那么高。
+**查询特性** 二叉树的搜索很快，堆则较慢。相对于在堆前端添加最大（或最小）值，以及允许快速插入和删除等特性，查询的优先级则不那么高。
 **Searching.** Whereas searching is fast in a binary tree, it is slow in a heap. Searching isn't a top priority in a heap since the purpose of a heap is to put the largest (or smallest) node at the front and to allow relatively fast inserts and deletes.
 
 ## 数组中的树（The tree inside an array）
@@ -171,7 +171,7 @@ Pop quiz! Let's say we have the array:
 
 	[ 10, 14, 25, 33, 81, 82, 99 ]
 
-它是一个有效的堆吗？答案是对！一个从小到大的有序数组就是一个有效对小序堆。可以向下面这样把它画出来：
+它是一个有效的堆吗？是的！一个从小到大的有序数组就是一个有效对小序堆。可以向下面这样把它画出来：
 
 Is this a valid heap? The answer is yes! A sorted array from low-to-high is a valid min-heap. We can draw this heap as follows:
 
@@ -408,11 +408,13 @@ In code:
 
 Here, `elements` is the heap's own array. We walk backwards through this array, starting at the first non-leaf node, and call `shiftDown()`. This simple loop puts these nodes, as well as the leaves that we skipped, in the correct order. This is known as Floyd's algorithm and only takes **O(n)** time. Win!
 
-## Searching the heap
+## 堆搜索（Searching the heap）
 
+堆就不是为了搜索而建立的，但是如果你想通过 `removeAtIndex()` 随机移除一个元素或者通过 replace()` 随机的修改一个元素，那么就需要先获取该元素的索引。查询就成了必然，虽然比较慢。
 Heaps are not made for fast searches, but if you want to remove an arbitrary element using `removeAtIndex()` or change the value of an element with `replace()`, then you need to obtain the index of that element. Searching is one way to do this, but it is slow.
 
-In a [binary search tree](../Binary%20Search%20Tree/), depending on the order of the nodes, a fast search can be guaranteed. Since a heap orders its nodes differently, a binary search will not work, and you need to check every node in the tree.
+在[二叉搜索树（binary search tree）](../Binary%20Search%20Tree/)中，由于各节点的的顺序固定，所以快速检索是可以保证的。然而堆节点的顺序是不同的，所以二叉搜索算法（此时）行不通，我们必须遍历树中的每个节点。
+In a [二叉搜索树（binary search tree）](../Binary%20Search%20Tree/), depending on the order of the nodes, a fast search can be guaranteed. Since a heap orders its nodes differently, a binary search will not work, and you need to check every node in the tree.
 
 Let's take our example heap again:
 
