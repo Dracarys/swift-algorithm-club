@@ -81,7 +81,7 @@
 ![Deleting a leaf node](Images/DeleteLeaf.png)
 
 
-## 上码 (方案 1)
+## 代码 (方案 1)
 
 理论差不多了，接下来我们看看怎么通过 Swift 实现一个二叉搜索树。有两种方案可以实现。首先，展示一个类（class）实现的版本，之后在展示如何通过枚举（enum）来实现。
 
@@ -144,12 +144,14 @@ public class BinarySearchTree<T: Comparable> {
 let tree = BinarySearchTree<Int>(value: 7)
 ```
 
+`count` 属性用来指示其子树中拥有多少个节点。（译者：这里对原文理解不清，有待后序补充。）
 The `count` property determines how many nodes are in the subtree described by this node. This does not just count the node's immediate children but also their children and their children's children, and so on. If this particular object is the root node, then it counts how many nodes are in the entire tree. Initially, `count = 0`.
 
-> **Note:** Because `left`, `right`, and `parent` are optional, we can make good use of Swift's optional chaining (`?`) and nil-coalescing operators (`??`). You could also write this sort of thing with `if let`, but that is less concise.
+> **注意：** 由于 `left`, `right`, 和 `parent` 均是可选类型，所有可以充分利用 Swift 的可选链（`?`）和空合运算符（`??`）。当然也可以用 `if let`，但这样不够简洁。
 
-### Inserting nodes
+### 批量插入
 
+单个树节点自身是无意义的，下面是如何向树中批量添加新节点：
 A tree node by itself is useless, so here is how you would add new nodes to the tree:
 
 ```swift
@@ -172,13 +174,14 @@ A tree node by itself is useless, so here is how you would add new nodes to the 
   }
 ```
 
-Like so many other tree operations, insertion is easiest to implement with recursion. We compare the new value to the values of the existing nodes and decide whether to add it to the left branch or the right branch.
+与其它树操作类似，插入是最容易通过递归实现的。通过与已有节点的比较，来确定是将它添加到左分支还是右分支。
 
-If there is no more left or right child to look at, we create a `BinarySearchTree` object for the new node and connect it to the tree by setting its `parent` property.
+如果没有左或右子节点，那么就创建一个 `BinarySearchTree` 对象作为新节点，然后通过设置 `parent` 属性，将它连接到树中。
 
+> **注意：** 由于二叉搜索树的关键就在与左小，右大，所以插入始终都要从根开始，以保证其是一个有效的二叉树。
 > **Note:** Because the whole point of a binary search tree is to have smaller nodes on the left and larger ones on the right, you should always insert elements at the root to make sure this remains a valid binary tree!
 
-To build the complete tree from the example you can do:
+构建一个完整的树:
 
 ```swift
 let tree = BinarySearchTree<Int>(value: 7)
@@ -189,9 +192,10 @@ tree.insert(9)
 tree.insert(1)
 ```
 
+> **注意：** 为了后序验证，插入的数组尽量随机。如果有序的插入，那么最终树的形状可能就不对了。（译者：暂时不明白作者想表达什么？有待更新。）
 > **Note:** For reasons that will become clear later, you should insert the numbers in a random order. If you insert them in a sorted order, the tree will not have the right shape.
 
-For convenience, let's add an init method that calls `insert()` for all the elements in an array:
+除以便捷，我们添加一个初始化方法，他可以通过 `insert()` 将数组中所有元素插入（到树中）：
 
 ```swift
   public convenience init(array: [T]) {
@@ -203,17 +207,17 @@ For convenience, let's add an init method that calls `insert()` for all the elem
   }
 ```
 
-Now you can simply do this:
+现在可以这样创建一棵树了:
 
 ```swift
 let tree = BinarySearchTree<Int>(array: [7, 2, 5, 10, 9, 1])
 ```
 
-The first value in the array becomes the root of the tree.
+数组中的首元素即为树的根。
 
-### Debug output
+### Debug信息输出
 
-When working with complicated data structures, it is useful to have human-readable debug output.
+处理复杂数据结构时，输出可读性强的 debug 信息大有助益。
 
 ```swift
 extension BinarySearchTree: CustomStringConvertible {
@@ -231,21 +235,23 @@ extension BinarySearchTree: CustomStringConvertible {
 }
 ```
 
-When you do a `print(tree)`, you should get something like this:
+当调用 `print(tree)` 时, 会看到如下信息:
 
 	((1) <- 2 -> (5)) <- 7 -> ((9) <- 10)
 
-The root node is in the middle. With some imagination, you should see that this indeed corresponds to the following tree:
+根节点在中间。想象一下，是不是正好与下面的树相对应：
 
 ![The tree](Images/Tree2.png)
 
+你可能会想如果插入相同的元素会如何呢？（译者：这里有带尝试过后在进行补充。）
 You may be wondering what happens when you insert duplicate items? We always insert those in the right branch. Try it out!
 
-### Searching
+### 搜索
 
+我们的树中已经有值了，接下来做什么？当然是查询！快速查询某个对象是二叉搜索树的一个主要应用。:-)
 What do we do now that we have some values in our tree? Search for them, of course! To find items quickly is the main purpose of a binary search tree. :-)
 
-Here is the implementation of `search()`:
+下面是 `search()` 的实现代码：
 
 ```swift
   public func search(value: T) -> BinarySearchTree? {
@@ -259,13 +265,13 @@ Here is the implementation of `search()`:
   }
 ```
 
-I hope the logic is clear: this starts at the current node (usually the root) and compares the values. If the search value is less than the node's value, we continue searching in the left branch; if the search value is greater, we dive into the right branch.
+思路很简单：首先从当前节点开始（通常是根节点）进行比较。如果目标值小于当前节点的值，继续在左分支进行查询；如果大于，就在右分支继续。
 
-If there are no more nodes to look at -- when `left` or `right` is nil -- then we return `nil` to indicate the search value is not in the tree.
+如果已经没有节点可查了——即`left` 或 `right` 为空时——我们就返回 `nil`，表示查询的值在树中不存在。
 
-> **Note:** In Swift, that is conveniently done with optional chaining; when you write `left?.search(value)` it automatically returns nil if `left` is nil. There is no need to explicitly check for this with an `if` statement.
+> **注意：** 在 Swift 中，使用可选链非常便捷；如果 `left` 为空， `left?.search(value)` 会自动返空。完全不需要在通过 `if` 表示去判断。
 
-Searching is a recursive process, but you can also implement it with a simple loop instead:
+搜索是一个递归过程，但你也可以通过简单循环来实现：
 
 ```swift
   public func search(_ value: T) -> BinarySearchTree? {
@@ -283,9 +289,9 @@ Searching is a recursive process, but you can also implement it with a simple lo
   }
 ```
 
-Verify that you understand these two implementations are equivalent. Personally, I prefer to use iterative code over recursive code, but your opinion may differ. ;-)
+确保你已经理解这两种实现是等价的，依自己喜欢选用。但就我个人而言，相对于递归更倾向于迭代。;-)
 
-Here is how to test searching:
+下面是对搜索的测试:
 
 ```swift
 tree.search(5)
@@ -294,13 +300,13 @@ tree.search(7)
 tree.search(6)   // nil
 ```
 
-The first three lines return the corresponding `BinaryTreeNode` object. The last line returns `nil` because there is no node with value `6`.
+前三行都会返回了相应的 `BinaryTreeNode` 对象。最后一行返回了 `nil`，因为没有节点包涵 `6`。
 
-> **Note:** If there are duplicate items in the tree, `search()` returns the "highest" node. That makes sense, because we start searching from the root downwards.
+> **注意：** 如果树中存在多个相同的对象，那么 `search()` 会返回 “最高的” 那个节点。之所以如此，是因为我们总是从根开始向下查找。
 
-### Traversal
+### 遍历
 
-Remember there are 3 different ways to look at all nodes in the tree? Here they are:
+还记得遍历树中所有节点的 3 种方法吗？如下：
 
 ```swift
   public func traverseInOrder(process: (T) -> Void) {
@@ -322,15 +328,15 @@ Remember there are 3 different ways to look at all nodes in the tree? Here they 
   }
 ```
 
-They all work the same but in different orders. Notice that all the work is done recursively. The Swift's optional chaining makes it clear that the calls to `traverseInOrder()` etc are ignored when there is no left or right child.
+都能遍历，只是顺序不同。注意全部都是递归的。当没有左右子节点时，Swift 的可选链使对 `traverseInOrder()` 等的调用非常简洁明了。
 
-To print out all the values of the tree sorted from low to high you can write:
+按从小到大的顺序打印树中所有值：
 
 ```swift
 tree.traverseInOrder { value in print(value) }
 ```
 
-This prints the following:
+打印结果如下:
 
 	1
 	2
@@ -339,7 +345,7 @@ This prints the following:
 	9
 	10
 
-You can also add things like `map()` and `filter()` to the tree. For example, here is an implementation of map:
+你还可以给树添加 `map()` 和 `filter()` 方法。 例如，下面是一个 map 方法的实现：
 
 ```swift
 
@@ -352,9 +358,9 @@ You can also add things like `map()` and `filter()` to the tree. For example, he
   }
 ```
 
-This calls the `formula` closure on each node in the tree and collects the results in an array. `map()` works by traversing the tree in-order.
+`map()` 方法通过对树进行中序遍历，将 `formula` 闭包应用到树中的每个节点上，并将结果存放于一个数组中进行返回。
 
-An extremely simple example of how to use `map()`:
+一个非常简单的 `map()` 应用例子：
 
 ```swift
   public func toArray() -> [T] {
@@ -362,17 +368,17 @@ An extremely simple example of how to use `map()`:
   }
 ```
 
-This turns the contents of the tree back into a sorted array. Try it out in the playground:
+它将树中内容反转成一个有序的数组。在 playground 中尝试一下：
 
 ```swift
 tree.toArray()   // [1, 2, 5, 7, 9, 10]
 ```
 
-As an exercise, see if you can implement filter and reduce.
+作为联系，你自己可以尝试实现一个 filter 和 reduce。
 
-### Deleting nodes
+### 批量移除
 
-We can make the code more readable by defining some helper functions.
+通过定义一些辅助方法，可以让代码（逻辑）更加清晰。
 
 ```swift
   private func reconnectParentTo(node: BinarySearchTree?) {
@@ -387,9 +393,9 @@ We can make the code more readable by defining some helper functions.
   }
 ```
 
-Making changes to the tree involves changing a bunch of `parent` and `left` and `right` pointers. This function helps with this implementation. It takes the parent of the current node -- that is `self` -- and connects it to another node which will be one of the children of `self`.
+要修改一颗树需要修改大量的 `parent` 、 `left` 以及 `right` 引用。该方法正是为了解决这个问题。首先取得当前节点 `self` 的父节点，之后在把另一个节点连接为自己即 `self` 的子节点。
 
-We also need a function that returns the minimum and maximum of a node:
+此外是需要一个方法用来返回最小和最大的节点：
 
 ```swift
   public func minimum() -> BinarySearchTree {
@@ -410,7 +416,7 @@ We also need a function that returns the minimum and maximum of a node:
 
 ```
 
-The rest of the code is self-explanatory:
+余下的代码可读性很强，不在过多说明:
 
 ```swift
   @discardableResult public func remove() -> BinarySearchTree? {
@@ -444,9 +450,9 @@ The rest of the code is self-explanatory:
   }
 ```
 
-### Depth and height
+### 深度和高度
 
-Recall that the height of a node is the distance to its lowest leaf. We can calculate that with the following function:
+回想下节点的高度，即到其最底端叶子节点到距离。可以通过下面的方法计算得到：
 
 ```swift
   public func height() -> Int {
@@ -458,17 +464,18 @@ Recall that the height of a node is the distance to its lowest leaf. We can calc
   }
 ```
 
+查询左右分支的高度，返回最高的那个。同样是一个递归过程。由于需要比阿里所有的子节点，所以时间杂度是 **O(n)**。
 We look at the heights of the left and right branches and take the highest one. Again, this is a recursive procedure. Since this looks at all children of this node, performance is **O(n)**.
 
-> **Note:** Swift's null-coalescing operator is used as shorthand to deal with `left` or `right` pointers that are nil. You could write this with `if let`, but this is more concise.
+> **注意：** 这里使用 Swift 的空合运算符来处理 `left` 或 `right` 为空的情况。用 `if let` 也不错，但是这样相对更简洁。
 
-Try it out:
+尝试一下:
 
 ```swift
 tree.height()  // 2
 ```
 
-You can also calculate the *depth* of a node, which is the distance to the root. Here is the code:
+还可以计算节点的 *深度（depth）*，即与根节点的距离。代码如下：
 
 ```swift
   public func depth() -> Int {
@@ -482,7 +489,7 @@ You can also calculate the *depth* of a node, which is the distance to the root.
   }
 ```
 
-It steps upwards through the tree, following the `parent` pointers until we reach the root node (whose `parent` is nil). This takes **O(h)** time. Here is an example:
+通过 `parent` 应用向上（统计），直至根节点（它的 `parent` 为空）。这一操作的时间杂度是 **O(h)**。例如如下：
 
 ```swift
 if let node9 = tree.search(9) {
@@ -490,15 +497,15 @@ if let node9 = tree.search(9) {
 }
 ```
 
-### Predecessor and successor
+### 前驱和后继（Predecessor and successor）
 
-The binary search tree is always "sorted" but that does not mean that consecutive numbers are actually next to each other in the tree.
+虽然二叉搜索树总是“有序的”，但这并不意味着连续的数值在树中的位置也是相邻。
 
 ![Example](Images/Tree2.png)
 
-Note that you cannot find the number that comes before `7` by just looking at its left child node. The left child is `2`, not `5`. Likewise for the number that comes after `7`.
+注意，在查看左子节点之前，是没办法得到刚好小于 `7` 的那个数值的。它的左子节点是 `2`, 而不是刚好小于它的 `5`。
 
-The `predecessor()` function returns the node whose value precedes the current value in sorted order:
+`predecessor()` 会返回那个在整个序列中正在位于当前值之前的那个节点：
 
 ```swift
   public func predecessor() -> BinarySearchTree<T>? {
@@ -515,11 +522,11 @@ The `predecessor()` function returns the node whose value precedes the current v
   }
 ```
 
-It is easy if we have a left subtree. In that case, the immediate predecessor is the maximum value in that subtree. You can verify in the above picture that `5` is indeed the maximum value in `7`'s left branch.
+如果有左子树，那就简单。此时左子树的最大值就是（该节点的）前驱。通过前面的图例可以得知这一点， `5` 恰好是 `7` 的左分支上的做大值。
 
-If there is no left subtree, then we have to look at our parent nodes until we find a smaller value. If we want to know what the predecessor is of node `9`, we keep going up until we find the first parent with a smaller value, which is `7`.
+如果没有左子树，那就必须查找父节点，直到找到那个最小值。例如查找节点 `9`的前驱，持续向上查找，直至那个最先具有较小值的父节点，`7`。
 
-The code for `successor()` works the same way but mirrored:
+`successor()` 与之相似，只不过是镜像相反的：
 
 ```swift
   public func successor() -> BinarySearchTree<T>? {
@@ -536,13 +543,14 @@ The code for `successor()` works the same way but mirrored:
   }
 ```
 
-Both these methods run in **O(h)** time.
+这两个方法的时间杂度都是 **O(h)**。
 
+（译者：待复习完线索二叉树之后在翻译此段内容）
 > **Note:** There is a variation called a ["threaded" binary tree](../Threaded%20Binary%20Tree) where "unused" left and right pointers are repurposed to make direct links between predecessor and successor nodes. Very clever!
 
-### Is the search tree valid?
+### 二叉搜索树的有效性
 
-If you were intent on sabotage you could turn the binary search tree into an invalid tree by calling `insert()` on a node that is not the root. Here is an example:
+要破坏二叉搜索树，可以通过对一个非根节点调用 `insert()` 以使其变为一个无效树。示例如下：
 
 ```swift
 if let node1 = tree.search(1) {
@@ -550,11 +558,11 @@ if let node1 = tree.search(1) {
 }
 ```
 
-The value of the root node is `7`, so a node with value `100`must be in the tree's right branch. However, you are not inserting at the root but at a leaf node in the tree's left branch. So the new `100` node is in the wrong place in the tree!
+根节点是 `7`，所以 `100` 必须被插入到树的右分支上。然而你却没有从根节点开始，反而是从树的左分支上的叶子开始插入。因此，`100` 被插入到了错误的位置！
 
-As a result, doing `tree.search(100)` gives nil.
+进而导致 `tree.search(100)` 返回空值。
 
-You can check whether a tree is a valid binary search tree with the following method:
+可以通过下的方法来检查一个树是不是一个有效的二叉搜索树：
 
 ```swift
   public func isBST(minValue minValue: T, maxValue: T) -> Bool {
@@ -565,9 +573,9 @@ You can check whether a tree is a valid binary search tree with the following me
   }
 ```
 
-This verifies the left branch contains values that are less than the current node's value, and that the right branch only contains values that are larger.
+检查左分支的值是否小于当前节点的值，并且右分支的值大于当前值。
 
-Call it as follows:
+调用方法如下:
 
 ```swift
 if let node1 = tree.search(1) {
@@ -578,13 +586,13 @@ if let node1 = tree.search(1) {
 }
 ```
 
-## The code (solution 2)
+## 代码(方案 2)
 
-We have implemented the binary tree node as a class, but you can also use an enum.
+除了类可以实现二叉搜索树，枚举也是可以的。
 
-The difference is reference semantics versus value semantics. Making a change to the class-based tree will update that same instance in memory, but the enum-based tree is immutable -- any insertions or deletions will give you an entirely new copy of the tree. Which one is best, totally depends on what you want to use it for.
+区别就在于引用语义与值语义。基于类实现的树，一旦类被修改，那么内存中的相同实例都会被修改，而基于枚举的树是不可变的 —— 任何插入或删除都会给你一个基于原树的全新拷贝。至于那种方式更好，则完全取决于你的应用场景。
 
-Here is how you can make a binary search tree using an enum:
+下面是一个枚举实现的二叉搜索树：
 
 ```swift
 public enum BinarySearchTree<T: Comparable> {
@@ -594,15 +602,15 @@ public enum BinarySearchTree<T: Comparable> {
 }
 ```
 
-The enum has three cases:
+该枚举有三个 cases：
 
-- `Empty` to mark the end of a branch (the class-based version used `nil` references for this).
-- `Leaf` for a leaf node that has no children.
-- `Node` for a node that has one or two children. This is marked `indirect` so that it can hold `BinarySearchTree` values. Without `indirect` you can't make recursive enums.
+- `Empty` 表示分支末端 (基于类实现的版本中用 `nil` 引用表示).
+- `Leaf` 表示没有子节点的叶子节点。
+- `Node` 表示拥有一个或两个子节点的节点。此处用 `indirect` 修饰，以便其可以持有 `BinarySearchTree` 类型的值，否则不是递归枚举。
 
-> **Note:** The nodes in this binary tree do not have a reference to their parent node. It is not a major impediment, but it will make certain operations more cumbersome to implement.
+> **注意：** 这样的二叉树是没有指向父节点的引用的。这不是什么大问题，只是某些操作实现起来更麻烦一些。
 
-This implementation is recursive, and each case of the enum will be treated differently. For example, this is how you can calculate the number of nodes in the tree and the height of the tree:
+这里通过递归实现，并且枚举的每种 case 都必须区别对待。例如，下面展示了如果统计节点数以及数的高度：
 
 ```swift
   public var count: Int {
@@ -622,7 +630,7 @@ This implementation is recursive, and each case of the enum will be treated diff
   }
 ```
 
-Inserting new nodes looks like this:
+插入新节点:
 
 ```swift
   public func insert(newValue: T) -> BinarySearchTree {
@@ -647,7 +655,7 @@ Inserting new nodes looks like this:
   }
 ```
 
-Try it out in a playground:
+在 playground 中尝试一下:
 
 ```swift
 var tree = BinarySearchTree.Leaf(7)
@@ -658,9 +666,9 @@ tree = tree.insert(9)
 tree = tree.insert(1)
 ```
 
-Notice that for each insertion, you get back a new tree object, so you need to assign the result back to the `tree` variable.
+注意，每次的插入操作都会得到一个新的树对象，所以需要将结果重新赋给 `tree` 变量。
 
-Here is the all-important search function:
+下面是搜索方法：
 
 ```swift
   public func search(x: T) -> BinarySearchTree? {
@@ -681,9 +689,9 @@ Here is the all-important search function:
   }
 ```
 
-Most of these functions have the same structure.
+大多数的方法都有相同的结构。
 
-Try it out in a playground:
+在 playground 中尝试一下:
 
 ```swift
 tree.search(10)
@@ -691,7 +699,7 @@ tree.search(1)
 tree.search(11)   // nil
 ```
 
-To print the tree for debug purposes, you can use this method:
+要 debug 打印整个树，可以使用下面的方法：
 
 ```swift
 extension BinarySearchTree: CustomDebugStringConvertible {
@@ -706,24 +714,28 @@ extension BinarySearchTree: CustomDebugStringConvertible {
 }
 ```
 
-When you do `print(tree)`, it will look like this:
+执行 `print(tree)` 的结果如下:
 
 	((1 <- 2 -> 5) <- 7 -> (9 <- 10 -> .))
 
-The root node is in the middle, and a dot means there is no child at that position.
+中间是根节点，点表示已经没有子节点。
 
-## When the tree becomes unbalanced...
+## 当树开不平衡。。。（When the tree becomes unbalanced...）
 
-A binary search tree is *balanced* when its left and right subtrees contain the same number of nodes. In that case, the height of the tree is *log(n)*, where *n* is the number of nodes. That is the ideal situation.
+当二叉树的左右子树拥有相同数量的节点时，那么它是 *平衡的（balanced）*。此时树的高度是 *log(n)*，*n* 表示节点数。这是理想状态。
 
+一旦一个分支显著的比另一个更长，搜索就会变的非常慢。实际检索数量将超过需求。最坏的情况是，树的高度变为  *n*。此时树相对于二叉搜索树来说更像是一个[链表（linked list）](../Linked%20List/)，时间杂度也将退化到 **O(n)**。比较糟糕！
 If one branch is significantly longer than the other, searching becomes very slow. We end up checking more values than we need. In the worst case, the height of the tree can become *n*. Such a tree acts like a [linked list](../Linked%20List/) than a binary search tree, with performance degrading to **O(n)**. Not good!
 
-One way to make the binary search tree balanced is to insert the nodes in a totally random order. On average that should balance out the tree well, but it not guaranteed, nor is it always practical.
+保持二叉搜索树平衡性的一个方法就是以完全随机的顺序插入新节点。总体上可以很好的保证树的平衡性，但这是没法保证的，也不实际。
 
-The other solution is to use a *self-balancing* binary tree. This type of data structure adjusts the tree to keep it balanced after you insert or delete nodes. To see examples, check [AVL tree](../AVL%20Tree) and [red-black tree](../Red-Black%20Tree).
+另一个办法就是使用 *自平衡（self-balancing)* 二叉树。这种数据结构会在插入或删除节点后进行自适应，以保证树的平衡性。了解更多，请参见[平衡树（AVL tree）](../AVL%20Tree)和[红黑树（red-black tree）](../Red-Black%20Tree)
 
-## See also
+## 参见
 
 [Binary Search Tree on Wikipedia](https://en.wikipedia.org/wiki/Binary_search_tree)
 
-*Written for the Swift Algorithm Club by [Nicolas Ameghino](http://www.github.com/nameghino) and Matthijs Hollemans*
+
+*由 [Nicolas Ameghino](http://www.github.com/nameghino) 和 Matthijs Hollemans 联合发表于 Swift 算法社区*
+
+*由 William Han 翻译*
