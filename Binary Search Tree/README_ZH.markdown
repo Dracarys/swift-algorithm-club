@@ -245,14 +245,14 @@ extension BinarySearchTree: CustomStringConvertible {
 
 树中已经有值了，那么接下来我们做点什么呢？当然是查询！快速查询对象是二叉搜索树的一个主要应用。:-)
 
-下面是 `search()` 的实现代码：
+下面是 `search()` 的实现：
 
 ```swift
   public func search(value: T) -> BinarySearchTree? {
     if value < self.value {
-      return left?.search(value)
+      return left?.search(value: value)
     } else if value > self.value {
-      return right?.search(value)
+      return right?.search(value: value)
     } else {
       return self  // found it!
     }
