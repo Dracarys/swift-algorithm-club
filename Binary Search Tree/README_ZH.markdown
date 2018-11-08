@@ -81,7 +81,7 @@
 ![Deleting a leaf node](Images/DeleteLeaf.png)
 
 
-## 代码 (方案 1)
+## 实现方案 1
 
 理论差不多了，接下来我们看看怎么通过 Swift 实现一个二叉搜索树。有两种方案可以实现。首先，展示一个类（class）实现的版本，之后在展示如何通过枚举（enum）来实现。
 
@@ -144,8 +144,7 @@ public class BinarySearchTree<T: Comparable> {
 let tree = BinarySearchTree<Int>(value: 7)
 ```
 
-`count` 属性用来指示其子树中拥有多少个节点。（译者：这里对原文理解不清，有待后序补充。）
-The `count` property determines how many nodes are in the subtree described by this node. This does not just count the node's immediate children but also their children and their children's children, and so on. If this particular object is the root node, then it counts how many nodes are in the entire tree. Initially, `count = 0`.
+`count` 属性用来统计某个节点的子树中拥有多少个节点。它不仅仅统计它的子节点，还统计它子节点的子子孙孙。如果该节点恰好是根节点，那么它统计的就是整个树的节点数。初始，`count = 0`。
 
 > **注意：** 由于 `left`, `right`, 和 `parent` 均是可选类型，所有可以充分利用 Swift 的可选链（`?`）和空合运算符（`??`）。当然也可以用 `if let`，但这样不够简洁。
 
