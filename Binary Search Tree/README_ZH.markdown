@@ -458,10 +458,9 @@ tree.toArray()   // [1, 2, 5, 7, 9, 10]
   }
 ```
 
-查询左右分支的高度，返回最高的那个。同样是一个递归过程。由于需要比阿里所有的子节点，所以时间杂度是 **O(n)**。
-We look at the heights of the left and right branches and take the highest one. Again, this is a recursive procedure. Since this looks at all children of this node, performance is **O(n)**.
+查询左右分支的高度，返回最高的那个。同样是一个递归过程。由于需要遍历该节点的所有的子节点，所以时间杂度是 **O(n)**。
 
-> **注意：** 这里使用 Swift 的空合运算符来处理 `left` 或 `right` 为空的情况。用 `if let` 也不错，但是这样相对更简洁。
+> **注意：** 这里使用 Swift 的空合运算符来处理 `left` 或 `right` 为空的情况。虽然用 `if let` 也不错，但是这样相对更简洁。
 
 尝试一下:
 
@@ -493,7 +492,7 @@ if let node9 = tree.search(9) {
 
 ### 前驱和后继（Predecessor and successor）
 
-虽然二叉搜索树总是“有序的”，但这并不意味着连续的数值在树中的位置也是相邻。
+虽然二叉搜索树总是“有序的”，但这并不意味着顺序相连的数值在树中的位置也是相邻。
 
 ![Example](Images/Tree2.png)
 
@@ -539,8 +538,7 @@ if let node9 = tree.search(9) {
 
 这两个方法的时间杂度都是 **O(h)**。
 
-（译者：待复习完线索二叉树之后在翻译此段内容）
-> **Note:** There is a variation called a ["threaded" binary tree](../Threaded%20Binary%20Tree) where "unused" left and right pointers are repurposed to make direct links between predecessor and successor nodes. Very clever!
+> **Note:** There is a variation called a ["threaded" binary tree](../Threaded%20Binary%20Tree) where "unused" left and right pointers are repurposed to make direct links between predecessor and successor nodes. Very clever!（译者：待复习完线索二叉树之后在翻译此段内容）
 
 ### 二叉搜索树的有效性
 
@@ -714,16 +712,15 @@ extension BinarySearchTree: CustomDebugStringConvertible {
 
 中间是根节点，点表示已经没有子节点。
 
-## 当树开不平衡。。。（When the tree becomes unbalanced...）
+## 当树变的不在平衡
 
 当二叉树的左右子树拥有相同数量的节点时，那么它是 *平衡的（balanced）*。此时树的高度是 *log(n)*，*n* 表示节点数。这是理想状态。
 
-一旦一个分支显著的比另一个更长，搜索就会变的非常慢。实际检索数量将超过需求。最坏的情况是，树的高度变为  *n*。此时树相对于二叉搜索树来说更像是一个[链表（linked list）](../Linked%20List/)，时间杂度也将退化到 **O(n)**。比较糟糕！
-If one branch is significantly longer than the other, searching becomes very slow. We end up checking more values than we need. In the worst case, the height of the tree can become *n*. Such a tree acts like a [linked list](../Linked%20List/) than a binary search tree, with performance degrading to **O(n)**. Not good!
+一旦一个分支显著的比另一个更长，搜索就会变的非常慢。不必要的检索大大增加。最坏的情况是，树的高度变为 *n*。此时树相对于二叉搜索树来说更像是一个[链表（linked list）](../Linked%20List/)，时间杂度也将退化到 **O(n)**。
 
 保持二叉搜索树平衡性的一个方法就是以完全随机的顺序插入新节点。总体上可以很好的保证树的平衡性，但这是没法保证的，也不实际。
 
-另一个办法就是使用 *自平衡（self-balancing)* 二叉树。这种数据结构会在插入或删除节点后进行自适应，以保证树的平衡性。了解更多，请参见[平衡树（AVL tree）](../AVL%20Tree)和[红黑树（red-black tree）](../Red-Black%20Tree)
+另一个办法就是使用 *自平衡（self-balancing)* 二叉树。这种数据结构会在插入或删除节点后进行自适应，以保证树的平衡性。欲了解更多，请参见[平衡树（AVL tree）](../AVL%20Tree)和[红黑树（red-black tree）](../Red-Black%20Tree)
 
 ## 参见
 
