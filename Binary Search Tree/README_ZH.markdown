@@ -191,7 +191,7 @@ tree.insert(1)
 
 > **注意：** 为了之后的深入了解，插入的数应尽量随机。如果有序的插入，那么最终树的形可能就不对了。（译者：尽量保持树的平衡性）
 
-除以便捷，我们添加一个初始化方法，他可以通过 `insert()` 将数组中所有元素插入（到树中）：
+为了方便操作，这里增加一个初始化方法，这样就可以通过 `insert()` 将数组中所有元素插入（到树中）了：
 
 ```swift
   public convenience init(array: [T]) {
@@ -239,13 +239,11 @@ extension BinarySearchTree: CustomStringConvertible {
 
 ![The tree](Images/Tree2.png)
 
-你可能会想如果插入相同的元素会如何呢？（译者：这里有带尝试过后在进行补充。）
-You may be wondering what happens when you insert duplicate items? We always insert those in the right branch. Try it out!
+你可能会想如果插入相同的元素会如何呢？我们这里总是会将它插入右分支。尝试一下。
 
 ### 搜索
 
-我们的树中已经有值了，接下来做什么？当然是查询！快速查询某个对象是二叉搜索树的一个主要应用。:-)
-What do we do now that we have some values in our tree? Search for them, of course! To find items quickly is the main purpose of a binary search tree. :-)
+树中已经有值了，那么接下来我们做点什么呢？当然是查询！快速查询对象是二叉搜索树的一个主要应用。:-)
 
 下面是 `search()` 的实现代码：
 
