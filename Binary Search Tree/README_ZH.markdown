@@ -150,8 +150,7 @@ let tree = BinarySearchTree<Int>(value: 7)
 
 ### 批量插入
 
-单个树节点自身是无意义的，下面是如何向树中批量添加新节点：
-A tree node by itself is useless, so here is how you would add new nodes to the tree:
+单个树节点自身是无意义的，可以通过下面的方法想树中插入新节点：
 
 ```swift
   public func insert(value: T) {
@@ -177,8 +176,7 @@ A tree node by itself is useless, so here is how you would add new nodes to the 
 
 如果没有左或右子节点，那么就创建一个 `BinarySearchTree` 对象作为新节点，然后通过设置 `parent` 属性，将它连接到树中。
 
-> **注意：** 由于二叉搜索树的关键就在与左小，右大，所以插入始终都要从根开始，以保证其是一个有效的二叉树。
-> **Note:** Because the whole point of a binary search tree is to have smaller nodes on the left and larger ones on the right, you should always insert elements at the root to make sure this remains a valid binary tree!
+> **注意：** 由于二叉搜索树的关键就在与左小，右大，所以始终要从根开始执行插入，以保证在操作完毕后仍是一个有效的二叉搜索树！
 
 构建一个完整的树:
 
@@ -191,8 +189,7 @@ tree.insert(9)
 tree.insert(1)
 ```
 
-> **注意：** 为了后序验证，插入的数组尽量随机。如果有序的插入，那么最终树的形状可能就不对了。（译者：暂时不明白作者想表达什么？有待更新。）
-> **Note:** For reasons that will become clear later, you should insert the numbers in a random order. If you insert them in a sorted order, the tree will not have the right shape.
+> **注意：** 为了之后的深入了解，插入的数应尽量随机。如果有序的插入，那么最终树的形可能就不对了。（译者：尽量保持树的平衡性）
 
 除以便捷，我们添加一个初始化方法，他可以通过 `insert()` 将数组中所有元素插入（到树中）：
 
