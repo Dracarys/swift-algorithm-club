@@ -1,8 +1,10 @@
-# Red-Black Tree
+# 红黑树（Red-Black Tree）
 
-A red-black tree (RBT) is a balanced version of a [Binary Search Tree](https://github.com/raywenderlich/swift-algorithm-club/tree/master/Binary%20Search%20Tree) guaranteeing that the basic operations (search, predecessor, successor, minimum, maximum, insert and delete) have a logarithmic worst case performance.
+> **注意:** 虽然这个项目的翻译仅仅是为了帮助自己复习提高算法知识水平，但是本着严谨，尽量避免误导的态度，鉴于译者自己对红黑树的理解上还有欠缺，所以暂停翻译，待后序更新。
+> 
+红黑树（RBTs）是一个平衡版的 [二叉搜索树（Binary Search Tree）](../Binary%20Search%20Tree)，它可以保证那些基础操作（搜索，前驱，后继，最小，最大，插入和删除）的时间杂度即使最坏也只是对数。
 
-Binary search trees (BSTs) have the disadvantage that they can become unbalanced after some insert or delete operations. In the worst case, this could lead to a tree where the nodes build a linked list as shown in the following example:
+二叉搜素树（BSTs）的缺点是在执行插入或删除操作后可能变的不在平衡。最坏时，会导致整棵树变成一个如下的链表：
 
 ```
 a
@@ -13,36 +15,40 @@ a
       \
        d
 ```
-To prevent this issue, RBTs perform rebalancing operations after an insert or delete and store an additional color property at each node which can either be red or black. After each operation a RBT satisfies the following properties:
+为了阻止该问题的发生，红黑树会在插入或删除后及性能在平衡，并且在每个节点上存储一个额外的红或黑的颜色属性。每次操作后，红黑树均具备一下特征：
 
-## Properties
+## 特征
 
-1. Every node is either red or black
-2. The root is black
-3. Every leaf (nullLeaf) is black
-4. If a node is red, then both its children are black
-5. For each node, all paths from the node to descendant leaves contain the same number of black nodes
+1. 每个节点非红即黑。 
+2. 根节点是黑色的。
+3. 每个叶子节点是黑色的。
+4. 如果一个节点是红色的，那么它的两个子节点都是黑色的。
+5. 对任何一个节点而言，位于该节点与其叶子节点之间路径上的黑色节点数相同。
 
+特征 5 恰好描述某个节点 x 的“黑高度”的定义，bh(x)，它表示位于该节点向下与其叶子节点之间路径上的黑色节点数，不包含该节点自身。来自[算法导论（CLRS）]
 Property 5 includes the definition of the black-height of a node x, bh(x), which is the number of black nodes on a path from this node down to a leaf not counting the node itself.
 From [CLRS]
 
-## Methods
+## 方法
 
-Nodes:
-* `nodeX.getSuccessor()` Returns the inorder successor of nodeX
-* `nodeX.minimum()` Returns the node with the minimum key of the subtree of nodeX
-* `nodeX.maximum()` Returns the node with the maximum key of the subtree of nodeX
-Tree:
-* `search(input:)` Returns the node with the given key value
-* `minValue()` Returns the minimum key value of the whole tree
-* `maxValue()` Returns the maximum key value of the whole tree
-* `insert(key:)` Inserts the key value into the tree
-* `delete(key:)` Delete the node with the respective key value from the tree
-* `verify()` Verifies that the given tree fulfills the red-black tree properties
+节点的：
 
-The rotation, insertion and deletion algorithms are implemented based on the pseudo-code provided in [CLRS]
+* `nodeX.getSuccessor()` 返回 nodeX 的有序后继者
+* `nodeX.minimum()` 返回 Nodex 子树中包含最小键的节点。
+* `nodeX.maximum()` 返回 Nodex 子树中包含最大键的节点。
 
-## Implementation Details
+树的：
+
+* `search(input:)` 返回指定键值的节点
+* `minValue()` 返回整棵树中最小的键值
+* `maxValue()` 返回整棵树中最大的键值
+* `insert(key:)` 向树中插入键值
+* `delete(key:)` 删除含有指定键值的节点
+* `verify()` 校验给定的树是否符合红色树特征
+
+旋转、插入和删除算法来自[算法导论（CLRS）]，均基于伪代码实现，
+
+## 实现细节
 
 For convenience, all nil-pointers to children or the parent (except the parent of the root) of a node are exchanged with a nullLeaf. This is an ordinary node object, like all other nodes in the tree, but with a black color, and in this case a nil value for its children, parent and key. Therefore, an empty tree consists of exactly one nullLeaf at the root.
 
