@@ -98,28 +98,28 @@ binarySearch(numbers, key: 43, range: 0 ..< numbers.count)  // gives 13
 
 ## 逐步讲解
 
-It might be useful to look at how the algorithm works in detail.
+下面将详解讲解该算法的运行原理。
 
-The array from the above example consists of 19 numbers and looks like this when sorted:
+之前例子中的数组内含19个已经排好序的数字，如下：
 
 	[ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67 ]
 
-We're trying to determine if the number `43` is in this array.
+假设我们要查找数字 `43`。
 
-To split the array in half, we need to know the index of the object in the middle. That's determined by this line:
+要将数组进行对分，就需要先确定中间位置的索引。可以通过方式取得：
 
 ```swift
 let midIndex = range.lowerBound + (range.upperBound - range.lowerBound) / 2
 ```
 
-Initially, the range has `lowerBound = 0` and `upperBound = 19`. Filling in these values, we find that `midIndex` is `0 + (19 - 0)/2 = 19/2 = 9`. It's actually `9.5` but because we're using integers, the answer is rounded down.
+初始，range 的`lowerBound = 0`，`upperBound = 19`。代入上面的方程求`midIndex` 得 `0 + (19 - 0)/2 = 19/2 = 9`。实际应为 `9.5`，但由于索引必须为整数，所以向下取整数。
 
-In the next figure, the `*` shows the middle item. As you can see, the number of items on each side is the same, so we're split right down the middle.
+如下， `*` 标记的真实中间位置的元素，可以看到，标记两边的元素个数是相同的，此时正好将数组从中间一分为二。
 
 	[ 2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67 ]
                                       *
 
-Now binary search will determine which half to use. The relevant section from the code is:
+接下来，需要判断在那半边查找。相关判断逻辑如下：
 
 ```swift
 if a[midIndex] > key {
@@ -131,53 +131,51 @@ if a[midIndex] > key {
 }
 ```
 
-In this case, `a[midIndex] = 29`. That's less than the search key, so we can safely conclude that the search key will never be in the left half of the array. After all, the left half only contains numbers smaller than `29`. Hence, the search key must be in the right half somewhere (or not in the array at all).
+由于 `a[midIndex] = 29`，小于目标值，因此可以确定目标值肯定不会在左半边，因为左半边都是小于 `29` 的数，相应的，目标值就可能在右半边（或者不存在）。
 
-Now we can simply repeat the binary search, but on the array interval from `midIndex + 1` to `range.upperBound`:
+接下来，再对 `midIndex + 1` 到 `range.upperBound` 这部分数组进行二分查找：
 
 	[ x, x, x, x, x, x, x, x, x, x | 31, 37, 41, 43, 47, 53, 59, 61, 67 ]
 
-Since we no longer need to concern ourselves with the left half of the array, I've marked that with `x`'s. From now on we'll only look at the right half, which starts at array index 10.
+由于不用在考虑左半边的数组内容，所以这里将这部分元素统一用 `x` 标记。现在开始我们将只关注右半边即可，它在树中的起始索引是 10 。
 
-We calculate the index of the new middle element: `midIndex = 10 + (19 - 10)/2 = 14`, and split the array down the middle again.
+重新求中间元素索引：`midIndex = 10 + (19 - 10)/2 = 14`，再次从中间分开。
 
 	[ x, x, x, x, x, x, x, x, x, x | 31, 37, 41, 43, 47, 53, 59, 61, 67 ]
 	                                                 *
+此时，`a[14]` 正好位于数组中半边的中间位置。
 
-As you can see, `a[14]` is indeed the middle element of the array's right half.
-
-Is the search key greater or smaller than `a[14]`? It's smaller because `43 < 47`. This time we're taking the left half and ignore the larger numbers on the right:
+目标值是否小于 `a[14]` 呢？ `43 < 47`。这次选择左半边，将右边大于的部分忽略掉:
 
 	[ x, x, x, x, x, x, x, x, x, x | 31, 37, 41, 43 | x, x, x, x, x ]
 
-The new `midIndex` is here:
+新的 `midIndex` 在这:
 
 	[ x, x, x, x, x, x, x, x, x, x | 31, 37, 41, 43 | x, x, x, x, x ]
 	                                     *
 
-The search key is greater than `37`, so continue with the right side:
+目标值大于 `37`, 所以看右半边:
 
 	[ x, x, x, x, x, x, x, x, x, x | x, x | 41, 43 | x, x, x, x, x ]
 	                                        *
-
-Again, the search key is greater, so split once more and take the right side:
+还是目标值较大，那么继续对右半边进行对分：
 
 	[ x, x, x, x, x, x, x, x, x, x | x, x | x | 43 | x, x, x, x, x ]
 	                                            *
 
-And now we're done. The search key equals the array element we're looking at, so we've finally found what we were searching for: number `43` is at array index `13`. w00t!
+好了，目标值正好与我们找到的数组元素相等，终于找到：数字 `43` 在数组中的索引是 `13`。耶！
 
-It may have seemed like a lot of work, but in reality it only took four steps to find the search key in the array, which sounds about right because `log_2(19) = 4.23`. With a linear search, it would have taken 14 steps.
+看上去好像工作量不小，但实际上只用光了 4 步就找到了，恰好是 `log_2(19) = 4.23`。如果是线性查找，就会变成 14 步之多。
 
-What would happen if we were to search for `42` instead of `43`? In that case, we can't split up the array any further. The `range.upperBound` becomes smaller than `range.lowerBound`. That tells the algorithm the search key is not in the array and it returns `nil`.
+如果目标值是 `42` 而不是 `43` 呢？那么最后将无法对数组进行在分。`range.upperBound` 会变的小于 `range.lowerBound`。这说明目标值不在该数组中，并返回 `nil`。
 
-> **Note:** Many implementations of binary search calculate `midIndex = (lowerBound + upperBound) / 2`. This contains a subtle bug that only appears with very large arrays, because `lowerBound + upperBound` may overflow the maximum number an integer can hold. This situation is unlikely to happen on a 64-bit CPU, but it definitely can on 32-bit machines.
+> **注意：** 众多二分查找实现中涉及到的求 `midIndex = (lowerBound + upperBound) / 2` 方程，在处理非常大的数组时有个问题，那就是 `lowerBound + upperBound` 可能超出整型所能容纳的范围，导致溢出。该问题几乎不会在 64 位 CPU 上发生，但是 32 位是绝对有可能。
 
 ## 迭代 VS 递归
 
-Binary search is recursive in nature because you apply the same logic over and over again to smaller and smaller subarrays. However, that does not mean you must implement `binarySearch()` as a recursive function. It's often more efficient to convert a recursive algorithm into an iterative version, using a simple loop instead of lots of recursive function calls.
+二分查找是一个递归（逻辑），因为过程中总是在不断重复地缩小数组的范围。然而，这并不意味着就必须以递归的方式去实现 `binarySearch()` 函数。通常更高效的做法是将递归算法用迭代的方式去实现，用简单的循环替换大量递归调用。
 
-Here is an iterative implementation of binary search in Swift:
+下面是通过 Swift 以迭代的方式实现的二分查找：
 
 ```swift
 func binarySearch<T: Comparable>(_ a: [T], key: T) -> Int? {
@@ -197,9 +195,9 @@ func binarySearch<T: Comparable>(_ a: [T], key: T) -> Int? {
 }
 ```
 
-As you can see, the code is very similar to the recursive version. The main difference is in the use of the `while` loop.
+可以看到，代码比递归的方式少了很多。最大的区别就在 `while` 循环中。
 
-Use it like this:
+用法如下：
 
 ```swift
 let numbers = [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31, 37, 41, 43, 47, 53, 59, 61, 67]
