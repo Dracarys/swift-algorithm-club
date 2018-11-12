@@ -1,99 +1,65 @@
-# 堆（Heap）(Unfinished)
+# 堆（Heap）
 > 译者声明：由于本人在翻译时对堆和树的知识有欠缺（这也正是翻译的意义，帮助自己查漏补缺），导致部分翻译很不准确，尤其是专用术语，甚至是翻译错误，所以暂时不建议阅读该译文。
 > 
 > 相关教程在[这里](https://www.raywenderlich.com/160631/swift-algorithm-club-heap-and-priority-queue-data-structure)
-> This topic has been tutorialized [here](https://www.raywenderlich.com/160631/swift-algorithm-club-heap-and-priority-queue-data-structure)
 
-堆实际上是一个存储了[二叉树（binary tree）](../Binary%20Tree/)的数组（译者：必须是完全二叉树），且无需父/子（节点）指针。堆是基于堆属性（heap property）存储的，堆属性决定了其子节点在树中的排序。（译者：这里的堆属性主要是值堆的排序方式）
-
-A heap is a [binary tree](../Binary%20Tree/) inside an array, so it does not use parent/child pointers. A heap is sorted based on the "heap property" that determines the order of the nodes in the tree.
+堆实际上是一个内部元素以[二叉树（binary tree）](../Binary%20Tree/)形式存储的数组（译者：必须是完全二叉树），且无需父/子（节点）指针。堆是基于堆属性（heap property）存储的，堆属性决定了其子节点在树中的排序。（译者：堆属性或称为堆特征主要是指堆内元素的排序方式）
 
 堆的常用场景：
 
-- 建立 [优先级队列（priority queues）](../Priority%20Queue/)。
+- 构建 [优先级队列（priority queues）](../Priority%20Queue/)。
 - 提供 [堆排序（heap sorts）](../Heap%20Sort/)。
 - 快速查找集合中最小（或最大）元素。
 - 装X。
- 
-Common uses for heap:
-
-- To build [priority queues](../Priority%20Queue/).
-- To support [heap sorts](../Heap%20Sort/).
-- To compute the minimum (or maximum) element of a collection quickly.
-- To impress your non-programmer friends.
 
 ## 堆属性（The heap property）
 
-存在两种堆：*大序堆* 和 *小序堆*，他们之间最大的区别就在于字节点在树中的排序不同。（译者：这里将 *max-heap* 和 *min-heap* 译为大序堆和小序堆，正是为了突出他们最大的区别——排序，也有译为大顶堆和小顶堆，最大堆和最小堆的）
-There are two kinds of heaps: a *max-heap* and a *min-heap* which are different by the order in which they store the tree nodes.
+有两种堆：*大序堆* 和 *小序堆*，他们之间最大的区别就在于子节点在树中的排序不同。（译者：这里将 *max-heap* 和 *min-heap* 译为大序堆和小序堆，正是为了突出他们最大的区别——排序，也有译为大顶堆和小顶堆，最大堆和最小堆的）
 
-在大序堆中，父节点的值要比其所有字节点的值都大。在小序堆中，每个父节点的值都要小于其字节点的值。这被称为“堆属性”，并且它适用于树中的每个节点。
-In a max-heap, parent nodes have a greater value than each of their children. In a min-heap, every parent node has a smaller value than its child nodes. This is called the "heap property", and it is true for every single node in the tree.
+在大序堆中，父节点的值要比其所有字节点的值都大。在小序堆中，每个父节点的值都要小于其子节点的值。这被称为“堆属性”，并且它适用于树中的每个节点。
 
 例如：
-An example:
 
 ![A max-heap](Images/Heap1.png)
 
-这是一个大序堆，每个父节点都比其所有的子节点大。`(10)` 大于 `(7)` 和 `(2)`. `(7)` 大于 `(5)` 和 `(1)`.
+这是一个大序堆，每个父节点都比其所有的子节点大。`(10)` 大于 `(7)` 和 `(2)`. `(7)` 大于 `(5)` 和 `(1)`。
 
-This is a max-heap because every parent node is greater than its children. `(10)` is greater than `(7)` and `(2)`. `(7)` is greater than `(5)` and `(1)`.
+受限于堆属性，大序堆总是将最大的对象作为树的根。反之，小序堆总是将最小的对象作为其树的根。正是因为堆有这样的属性，所以通常用它来实现[优先队列（priority queue）](../Priority%20Queue/) ，以便更快捷的获取那个“最重要”的对象。
 
-受限于堆属性，大序堆总是将最大的对象作为树的根。反之，小序堆总是将最小的对象作为其树的根。正式因为堆有这样的属性，所以通常用它来实现[优先级队列（priority queue）](../Priority%20Queue/) ，以便更快捷的获取那个“最重要”的对象。
+> **注意:** 堆的根不是最大就是最小值，但是后续的其它元素顺序是无法保证的。例如，大序堆中索引为 0 的元素一定是最大的，但这并不意味着最后一个索引位元素就是最小的。只能保证最小值在其叶子节点中，但无法确定是哪一个。
 
-As a result of this heap property, a max-heap always stores its largest item at the root of the tree. For a min-heap, the root is always the smallest item in the tree. The heap property is useful because heaps are often used as a [priority queue](../Priority%20Queue/) to access the "most important" element quickly.
-
-> **注意:** 堆的根不是最大就是最小值，但是后续的其它元素顺序是无法保证的。例如，大序堆 0 索引元素一定是最大的，但这并不意味着最后一个索引位元素就是最小的。只能保证最小值在其子叶中，但无法确定是哪一个。
-
-> **Note:** The root of the heap has the maximum or minimum element, but the sort order of other elements are not predictable. For example, the maximum element is always at index 0 in a max-heap, but the minimum element isn’t necessarily the last one. -- the only guarantee you have is that it is one of the leaf nodes, but not which one.
-
-## 堆与其它常见树有什么不同（How does a heap compare to regular trees）?
+## 堆与其它常见树有什么不同
 
 堆不能取代二叉搜索树，他们之间既有相似也有不同。下面是它们之间的主要区别：
 
-A heap is not a replacement for a binary search tree, and there are similarities and differnces between them. Here are some main differences:
+**节点顺序** 在[二叉搜索树（binary search tree——BST）](../Binary%20Search%20Tree/)中，左侧的子节点必须小于父节点，而右侧的子节点则必须大于父节点。而堆无此要求。大序堆中两个子节点都必须小于父节点，而小序堆则必须都大于父节点。
 
-**节点顺序** 在[二叉搜索树（binary search tree——BST）](../Binary%20Search%20Tree/)中，左侧的子节点必须小于父节点，而右侧的子节点则必须大于其它节点。而堆则不是这样。大序堆中所有子节点都必须小于父节点，而小序堆又都必须大于父节点。
+**内存占用** 传统树所耗内存比其实际存储数据要大一些。你需要开辟外的存储空间以存储节点对象和指向左右子节点的指针。堆则使用普通的数组作为存储结构，且不需要（额外的）指针。
 
-**Order of the nodes.** In a [binary search tree (BST)(BST)](../Binary%20Search%20Tree/), the left child must be smaller than its parent, and the right child must be greater. This is not true for a heap. In a max-heap both children must be smaller than the parent, while in a min-heap they both must be greater.
+**平衡性** 二叉搜索树必须是“平衡”的，这样大多数操作才具有 **O(log n)** 的时间杂度。因此你必须以完全随机的方式插入或删除数据，否则就要用[平衡树（AVL tree）](../AVL%20Tree/) 或 [红黑树（red-black tree）](../Red-Black%20Tree/)（以保持其平衡性）。而堆不需要整棵树都是有序的，只要堆属性完备即可，因此不存在平衡性的问题。堆 **O(log n)** 的时间杂度是有堆自身树觉结构决定的。
 
-**内存占用** 传统树所耗内存比其实际存储数据要大一些。你需要开辟外的存储空间以存储节点对象和指向左右子节点的指针。堆则使用传统的数组作为存储结构，且不需要指针。
+**查询** 二叉树的搜索很快，堆较慢。相对于在堆前端添加最大（或最小）值，以及允许快速插入和删除等特性，查询的优先级则不那么高。
 
-**Memory.** Traditional trees take up more memory than just the data they store. You need to allocate additional storage for the node objects and pointers to the left/right child nodes. A heap only uses a plain array for storage and uses no pointers.
+## 数组中的树
 
-**平衡性** 二叉搜索树必须是“平衡”的，所以大多数操作都具有 **O(log n)** 执行效率。它允许你随机的插入和删除数据，或者像操作[平衡树（AVL tree）](../AVL%20Tree/) 或 [红黑树（red-black tree）](../Red-Black%20Tree/)那样。（译者：这里翻译不顺，暂时保留原文）
+用数组去实现一个树形结构，虽然听上去是有点奇怪，但是在时间和空间上都非常高效。
 
-**Balancing.** A binary search tree must be "balanced" so that most operations have **O(log n)** performance. You can either insert and delete your data in a random order or use something like an [AVL tree](../AVL%20Tree/) or [red-black tree](../Red-Black%20Tree/), but with heaps we don't actually need the entire tree to be sorted. We just want the heap property to be fulfilled, so balancing isn't an issue. Because of the way the heap is structured, heaps can guarantee **O(log n)** performance.
-
-**查询特性** 二叉树的搜索很快，堆则较慢。相对于在堆前端添加最大（或最小）值，以及允许快速插入和删除等特性，查询的优先级则不那么高。
-**Searching.** Whereas searching is fast in a binary tree, it is slow in a heap. Searching isn't a top priority in a heap since the purpose of a heap is to put the largest (or smallest) node at the front and to allow relatively fast inserts and deletes.
-
-## 数组中的树（The tree inside an array）
-
-用数组去实现一个树形结构，听上去是有点奇怪的，但是在耗时和所占空间上还是相当高效的。
-
-An array may seem like an odd way to implement a tree-like structure, but it is efficient in both time and space.
-
-This is how we are going to store the tree from the above example:
+前面的例子如果用树来存储，形式如下：
 
 	[ 10, 7, 2, 5, 1 ]
 
-这就是全部了，不需要比数组更多的存储空间。
-That's all there is to it! We don't need any more storage than just this simple array.
+
+这就是全部了，完全不需要比数组更多的存储空间。
 
 既然没有额外指针，怎么确定哪个是子节点，那个父节点呢？好问题！（实际上）树中各节点在数组中的索引顺序已经定义好了其间的父子关系。
 
-So how do we know which nodes are the parents and which are the children if we are not allowed to use any pointers? Good question! There is a well-defined relationship between the array index of a tree node and the array indices of its parent and children.
-
-假定 `i` 是节点的索引，那么通过下面的共识就可以得出相应父节点和子节点的索引：
-If `i` is the index of a node, then the following formulas give the array indices of its parent and child nodes:
+假定 `i` 是某节点的索引，那么通过下面的公式就可以求得相应父节点和子节点的索引：
 
     parent(i) = floor((i - 1)/2)
     left(i)   = 2i + 1
     right(i)  = 2i + 2
 
-注意， `right(i)` 就是简单的 `left(i) + 1`。因为左右节点总是相邻存储在一起。
-Note that `right(i)` is simply `left(i) + 1`. The left and right nodes are always stored right next to each other.
+注意， `right(i)` 仅仅是 `left(i) + 1`。因为左右节点总是相邻存储在一起。
 
 将数组的相应索引带入上面的公式，就可以得到父节点和子节点对应的位置：
 
@@ -105,112 +71,73 @@ Note that `right(i)` is simply `left(i) + 1`. The left and right nodes are alway
 | 5 | 3 | 1 | 7 | 8 |
 | 1 | 4 | 1 | 9 | 10 |
 
-Let's use these formulas on the example. Fill in the array index and we should get the positions of the parent and child nodes in the array:
+检查一下，确认数组索引与图中所示的树是不是一一对应的。
 
-| Node | Array index (`i`) | Parent index | Left child | Right child |
-|------|-------------|--------------|------------|-------------|
-| 10 | 0 | -1 | 1 | 2 |
-| 7 | 1 | 0 | 3 | 4 |
-| 2 | 2 | 0 | 5 | 6 |
-| 5 | 3 | 1 | 7 | 8 |
-| 1 | 4 | 1 | 9 | 10 |
+> **注意：** 根节点 `(10)` 没有父节点，因为 `-1` 不是一个有效的数组索引。同理， 节点 `(2)`, `(5)` 和 `(1)` 也不存在子节点，因为它们的数组索引越界了，由此可见，在使用前，务必要先确认索引的有效性。
 
-
-检查一下，确认数组索引与图中所示的树是一一对应的。
-Verify for yourself that these array indices indeed correspond to the picture of the tree.
-
-> **Note:** 根节点 `(10)` 没有父节点，因为 `-1` 不是一个有效的数组索引。同理， 节点 `(2)`, `(5)` 和 `(1)` 也不存在子节点，因为它们的数组索引越界了，由此可见，在使用前，始终要先确认索引的是否有效。
-
-> **Note:** The root node `(10)` does not have a parent because `-1` is not a valid array index. Likewise, nodes `(2)`, `(5)`, and `(1)` do not have children because those indices are greater than the array size, so we always have to make sure the indices we calculate are actually valid before we use them.
-
-在大序堆中再运行一次，父节点的值必须使用大于（或等于）子节点的值。也就是说下面的（表达式）对数组中的所有索引 `i` 都必须为 true：
-
-Recall that in a max-heap, the parent's value is always greater than (or equal to) the values of its children. This means the following must be true for all array indices `i`:
+回想一下大序堆，父节点的值必须使用大于（或等于）子节点的值。也就是说下面的（表达式）对数组中的所有索引 `i` 都必须为 true：
 
 ```swift
 array[parent(i)] >= array[i]
 ```
 
-确认一下，例子中给出的堆是否保持了堆属性
-Verify that this heap property holds for the array from the example heap.
+确认一下，例子中给出的堆是否保持了该堆属性。
 
-如你所见，该方程可以使我们不通过指针也能找到相应的父节点或子节点。它比指针（对方式）相对复杂一些，权衡利弊：增加了计算量，节约了内存空间。不过幸运的是，计算够快，而且时间复杂度仅是 **O(1)** 。
-As you can see, these equations allow us to find the parent or child index for any node without the need for pointers. It is complicated than just dereferencing a pointer, but that is the tradeoff: we save memory space but pay with extra computations. Fortunately, the computations are fast and only take **O(1)** time.
+可见，该方程可以使我们不通过指针也能找到相应的父节点或子节点的索引。相比指针（的方式）复杂一些，但权衡利弊：虽增加了计算量，但也节约了内存空间。幸运地是，该计算方式够快，且时间复杂度为 **O(1)** 。
 
-理解数组中索引与树中节点位置的映射关系非常重要。（例如，）这里有一个包涵4层15个节点的树：
-
-It is important to understand this relationship between array index and position in the tree. Here is a larger heap which has 15 nodes divided over four levels:
+理解数组中索引与树中节点位置的映射关系非常重要。（例如）下面是一棵分为 4 层含有 15 个节点的树：
 
 ![Large heap](Images/LargeHeap.png)
 
-图中的数字并不是节点的值，而是（节点）对应在数组中的索引。下面给出了数组索引与树不同层级之间的对应（关系）；
-The numbers in this picture are not the values of the nodes but the array indices that store the nodes! Here is the array indices correspond to the different levels of the tree:
+图中的数字并不是节点的值，而是（节点）对应在数组中的索引。下面给出了数组索引与树不同层级之间的对应（关系）：
 
 ![The heap array](Images/Array.png)
 
-要想公式正确，数组中的父节点必须位于子节点之前。可以上之前的图中印证（这一点）。
-For the formulas to work, parent nodes must appear before child nodes in the array. You can see that in the above picture.
+要想公式有效，数组中的父节点必须位于子节点之前。可以上之前的图中印证（这一点）。
 
-注意该方案的限定条件。下图就可以不选择堆而是用不同二叉树（代替）：
-Note that this scheme has limitations. You can do the following with a regular binary tree but not with a heap:
+注意这种方式是有限制的。（例如）下图就必须用常规的二叉树，而不能用堆：
 
 ![Impossible with a heap](Images/RegularTree.png)
 
-在当前最低层级的节点占满之前，是不可以生成新层级的，所以堆的形状始终是下面这样：
-
-You can not start a new level unless the current lowest level is completely full, so heaps always have this kind of shape:
+在当前最底层的节点被占满之前，是不可以生成新的一层的，所以堆的形状始终是下面这样：
 
 ![The shape of a heap](Images/HeapShape.png)
 
-> **Note:** 你*可以*用堆的形式去遍历一个二叉树，只是这样不仅浪费空间，而且还需要把数组中空值标记出来。（译者：因为普通的二叉树的一层未必是满的）
-
-> **Note:** You *could* emulate a regular binary tree with a heap, but it would be a waste of space, and you would need to mark array indices as being empty.
+> **注意：** 你*可以*用堆的形式去遍历一个普通二叉树，只是这样不仅浪费空间，而且还需要把数组中空值标记出来。（译者：因为普通的二叉树的一层未必是满的）
 
 突击测验！假设我们有下面这样一个数组：
-Pop quiz! Let's say we have the array:
 
 	[ 10, 14, 25, 33, 81, 82, 99 ]
 
-它是一个有效的堆吗？是的！一个从小到大的有序数组就是一个有效对小序堆。可以向下面这样把它画出来：
-
-Is this a valid heap? The answer is yes! A sorted array from low-to-high is a valid min-heap. We can draw this heap as follows:
+它是一个有效的堆吗？是的！一个从小到大的有序数组就是一个有效的小序堆。可以向下面这样把它画出来：
 
 ![A sorted array is a valid heap](Images/SortedArray.png)
 
 由于父节点总是小于它对子节点，因此堆属性得以维系。(自己确认下，一个从大到小的的有序数组是不是一个有序的大序堆)
-The heap property holds for each node because a parent is always smaller than its children. (Verify for yourself that an array sorted from high-to-low is always a valid max-heap.)
 
-> **注意:** 不是所有的小序堆都是一个有序的数组！它是不逆的。要想把堆变为有序数组，需要用到[堆排（heap sort）](../Heap%20Sort/)
-> **Note:** But not every min-heap is necessarily a sorted array! It only works one way. To turn a heap back into a sorted array, you need to use [heap sort](../Heap%20Sort/).
+> **注意：** 不是所有的小序堆都是一个有序的数组！它是不可逆的。要想把堆变为有序数组，需要借助[堆排（heap sort）](../Heap%20Sort/)
 
-## 更多的数学（More math）!
+## 更多的数学
 
 如果你很好奇，那么这里还有一些公式可以更好的表现堆的属性（特征）。你不需要理解的很透彻，但它有时却真的可以派上用场。该小节可以跳过。
 In case you are curious, here are a few more formulas that describe certain properties of a heap. You do not need to know these by heart, but they come in handy sometimes. Feel free to skip this section!
 
-树的*高度*定义了，从根部到最底部的节点一共几步，或者更公式化一点说：高度就是节点间的最大行高数。*h* 高度的堆拥有 *h+1* 层。
-The *height* of a tree is defined as the number of steps it takes to go from the root node to the lowest leaf node, or more formally: the height is the maximum number of edges between the nodes. A heap of height *h* has *h + 1* levels.
+树的*高度*定义了从根部到最底部的叶子节点所需的跳数，或者更公式化一点说：高度就是节点间的最大边数。*h* 高度 *h* 的堆拥有 *h+1* 层。
 
 下面的堆高度是 3， 所以他有 4 层：
-This heap has height 3, so it has 4 levels:
 
 ![Large heap](Images/LargeHeap.png)
 
 一个包涵 *n* 个节点的堆，其高度是 *h = floor(log2(n))*。之所以如此，是因为在添加新层之前，总是先把上一层级的节点添满。例子中有15个节点，所以它的高度是 `floor(log2(15)) = floor(3.91) = 3`。
 
-A heap with *n* nodes has height *h = floor(log2(n))*. This is because we always fill up the lowest level completely before we add a new level. The example has 15 nodes, so the height is `floor(log2(15)) = floor(3.91) = 3`.
-
 如果最底层已经填满，那么这一层包涵 *2^h* 个节点。余下的树上层包涵 *2^h - 1* 个节点。带入例子中相应的数据：最低一层有 8 个节点，恰好是 `2^3 = 8`。前面的三层共包含 7 个节点，正好等于 `2^3 - 1 = 8 - 1 = 7`。
-If the lowest level is completely full, then that level contains *2^h* nodes. The rest of the tree above it contains *2^h - 1* nodes. Fill in the numbers from the example: the lowest level has 8 nodes, which indeed is `2^3 = 8`. The first three levels contain a total of 7 nodes, i.e. `2^3 - 1 = 8 - 1 = 7`.
 
 整个堆中节点总数是 *2^(h+1) - 1*。代入例子，`2^4 - 1 = 16 - 1 = 15`。
-The total number of nodes *n* in the entire heap is therefore *2^(h+1) - 1*. In the example, `2^4 - 1 = 16 - 1 = 15`.
 
 一个高度为 *h* 含有 *n* 个元素堆，最多可以拥有  *ceil(n/2^(h+1))* 个节点。（译者：这里没懂，有待更新）
 There are at most *ceil(n/2^(h+1))* nodes of height *h* in an *n*-element heap.
 
 叶子节点在数组中的索引范围总是 *floor(n/2)* 到 *n-1*。由此我们可以快速地通过数组来构建一个堆。如有疑问，可以通过例子来验证这一结论。;-)
-The leaf nodes are always located at array indices *floor(n/2)* to *n-1*. We will make use of this fact to quickly build up the heap from an array. Verify this for the example if you don't believe it. ;-)
 
 几个简单的数学知识照亮了你的一天。（译者：这句翻译的不够好。）
 Just a few math facts to brighten your day.

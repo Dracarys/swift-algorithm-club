@@ -1,41 +1,40 @@
-# Priority Queue
+# 优先队列（Priority Queue）
 
-A priority queue is a [queue](../Queue/) where the most important element is always at the front.
+优先队列是一种其内最重要的元素总是位于前端的[queue](../Queue/)。
 
-The queue can be a *max-priority* queue (largest element first) or a *min-priority* queue (smallest element first).
+优先队列又分为*大元优先*队列（最大的元素在首）和*小元优先*队列（最小元素在首）。
 
-## Why use a priority queue?
+## 为什么？
 
-Priority queues are useful for algorithms that need to process a (large) number of items and where you repeatedly need to identify which one is now the biggest or smallest -- or however you define "most important".
+优先级队列通常用在那些需要处理大量元素，并且在处理过程中需要重复标记最大或最小值元素亦或是自定义个“重要元素”的算法中。
 
-Examples of algorithms that can benefit from a priority queue:
+优先队列的主要应用场景：
+- 模拟事件驱动。各个事件均带有时间戳，且需要按时间戳顺序执行。此时优先队列就非常容易找到下一个需要模拟的事件。
+- Dijkstra算法就是通过优先队列求得图中的最短路径。
+- 用于数据压缩的[霍夫曼编码（Huffman coding）](../Huffman%20Coding/)，该算法会构建一个压缩树。它需要反复查询两个尚无父节点的节点的最小频率。（译者：这里翻译不够准确。）
+- 人工智能的 A* 算法
+- 其它大量应用
 
-- Event-driven simulations. Each event is given a timestamp and you want events to be performed in order of their timestamps. The priority queue makes it easy to find the next event that needs to be simulated.
-- Dijkstra's algorithm for graph searching uses a priority queue to calculate the minimum cost.
-- [Huffman coding](../Huffman%20Coding/) for data compression. This algorithm builds up a compression tree. It repeatedly needs to find the two nodes with the smallest frequencies that do not have a parent node yet.
-- A* pathfinding for artificial intelligence.
-- Lots of other places!
+对与常规队列或者传统的数组来说，需要不断地对整个序列进行查询，以便能找到下一个最大值。而优先队列正式为此而优化的。
 
-With a regular queue or plain old array you'd need to scan the entire sequence over and over to find the next largest item. A priority queue is optimized for this sort of thing.
+## 做什么？
 
-## What can you do with a priority queue?
+优先队列的常见操作：
 
-Common operations on a priority queue:
+- **入队**：向队列中插入一个新元素
+- **出队**：移除并返回重要的那个元素
+- **查找最小值** 或 **查找最大值**：返回但不删除最重要元素
+- **修改优先级**: 调整已入队元素的优先级等级
 
-- **Enqueue**: inserts a new element into the queue.
-- **Dequeue**: removes and returns the queue's most important element.
-- **Find Minimum** or **Find Maximum**: returns the most important element but does not remove it.
-- **Change Priority**: for when your algorithm decides that an element has become more important while it's already in the queue.
+## 如何实现
 
-## How to implement a priority queue
+几种实现方式:
 
-There are different ways to implement priority queues:
+- [有序数组（sorted array）](../Ordered%20Array/)。最终要的元素位于数组末尾。缺点：由于必须有序插入，所以插入新元素较慢。
+- 平衡的[二叉搜索树（binary search tree）](../Binary%20Search%20Tree/)。对于双端优先队列来说是最佳的，因为它同时实现了高效地“查询最大”和“查询最小”。 
+- [堆（heap）](../Heap/)。 堆是优先队列最常用的数据结构，实际上，它俩经常作为同义词。堆比有序数组更高效，因为它仅需要部分有序。堆的操作堆时间杂度均为 **O(log n)**。
 
-- As a [sorted array](../Ordered%20Array/). The most important item is at the end of the array. Downside: inserting new items is slow because they must be inserted in sorted order.
-- As a balanced [binary search tree](../Binary%20Search%20Tree/). This is great for making a double-ended priority queue because it implements both "find minimum" and "find maximum" efficiently.
-- As a [heap](../Heap/). The heap is a natural data structure for a priority queue. In fact, the two terms are often used as synonyms. A heap is more efficient than a sorted array because a heap only has to be partially sorted. All heap operations are **O(log n)**.
-
-Here's a Swift priority queue based on a heap:
+下面是一个基于堆的优先队列的 Swift 实现：
 
 ```swift
 public struct PriorityQueue<T> {
@@ -71,10 +70,12 @@ public struct PriorityQueue<T> {
 }
 ```
 
-As you can see, there's nothing much to it. Making a priority queue is easy if you have a [heap](../Heap/) because a heap *is* pretty much a priority queue.
+如上所示，完全一样。如果一斤更有了[堆](../Heap/)，那么实现优先队列非常简单，因为堆*就是*一个优先队列。
 
-## See also
+## 参见
 
-[Priority Queue on Wikipedia](https://en.wikipedia.org/wiki/Priority_queue)
+[优先队列——维基百科](https://en.wikipedia.org/wiki/Priority_queue)
 
-*Written for Swift Algorithm Club by Matthijs Hollemans*
+*由 Matthijs Hollemans 发表于 Swift 算法社区*
+
+*由 William Han 翻译*
