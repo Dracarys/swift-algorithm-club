@@ -1,6 +1,5 @@
 # 堆（Heap）
-> 译者声明：由于本人在翻译时对堆和树的知识有欠缺（这也正是翻译的意义，帮助自己查漏补缺），导致部分翻译很不准确，尤其是专用术语，甚至是翻译错误，所以暂时不建议阅读该译文。
-> 
+
 > 相关教程在[这里](https://www.raywenderlich.com/160631/swift-algorithm-club-heap-and-priority-queue-data-structure)
 
 堆实际上是一个内部元素以[二叉树（binary tree）](../Binary%20Tree/)形式存储的数组（译者：必须是完全二叉树），且无需父/子（节点）指针。堆是基于堆属性（heap property）存储的，堆属性决定了其子节点在树中的排序。（译者：堆属性或称为堆特征主要是指堆内元素的排序方式）
@@ -14,7 +13,7 @@
 
 ## 堆属性（The heap property）
 
-有两种堆：*大序堆* 和 *小序堆*，他们之间最大的区别就在于子节点在树中的排序不同。（译者：这里将 *max-heap* 和 *min-heap* 译为大序堆和小序堆，正是为了突出他们最大的区别——排序，也有译为大顶堆和小顶堆，最大堆和最小堆的）
+有两种堆：*大序堆* 和 *小序堆*，他们之间最大的区别就在于子节点在树中的排序不同。（译者：也有译为大顶堆和小顶堆，最大堆和最小堆的。这里将 *max-heap* 和 *min-heap* 译为大序堆和小序堆，是为了突出他们最大的区别——排序）
 
 在大序堆中，父节点的值要比其所有字节点的值都大。在小序堆中，每个父节点的值都要小于其子节点的值。这被称为“堆属性”，并且它适用于树中的每个节点。
 
@@ -142,7 +141,7 @@ There are at most *ceil(n/2^(h+1))* nodes of height *h* in an *n*-element heap.
 几个简单的数学知识照亮了你的一天。（译者：这句翻译的极差，原文暂时保留。）
 Just a few math facts to brighten your day.
 
-## 用堆来做什么呢（What can you do with a heap）？
+## 能用堆做什么呢？
 
 在插入或移除元素后，有两个基本操作必须要做，以保证堆是一个有效的大序堆或小序堆：
 
@@ -168,131 +167,103 @@ Just a few math facts to brighten your day.
 
 - `buildHeap(array)`: 通过反复调用 `insert()` 方法，将一个（无序）数组转化为堆。如果你做的够好，那么（该方法的）时间杂度应该是 **O(n)**。
 
-- [堆排（Heap sort）](../Heap%20Sort/). 鉴于堆是一个数组, 我们可以利用这一特点对其进行从低到高地排序。 时间杂度: **O(n lg n)**。
-- [Heap sort](../Heap%20Sort/). Since the heap is an array, we can use its unique properties to sort the array from low to high. Time: **O(n lg n).**
+- [堆排（Heap sort）](../Heap%20Sort/). 鉴于堆是一个数组, 我们可以借助一特点对其进行从低到高地排序。 时间杂度: **O(n lg n)**。
 
-堆还有一个  `peek()` 方法，可以返回最大（大序堆）或最小（小序堆）的元素，而无序从堆中移除。时间杂度：**O(1)**。
-The heap also has a `peek()` function that returns the maximum (max-heap) or minimum (min-heap) element, without removing it from the heap. Time: **O(1)**.
+堆还有一个  `peek()` 方法，可以返回最大（大序堆）或最小（小序堆）的元素，而无需从堆中移除。时间杂度：**O(1)**。
 
-> **注意:** 说了这多，但是常用的堆操作还是插入新元素 `insert()` 和移除最大或最小值的`remove()` 两个方法。它们的时间杂度都是 **O(log n)**。其它操作方法都是为了一些进阶应用，例如构建优先级队列时，可以对已添加的重要对象进行修改。
+> **注意:** 虽然说了这么多，但是最常用的还是插入新元素 `insert()` 和移除最大或最小值的`remove()` 两个操作。它们的时间杂度都是 **O(log n)**。其它操作都是为了一些进阶应用，例如在构建优先级队列时，可以对已添加的重要对象进行修改。
 
-> **Note:** By far the most common things you will do with a heap are inserting new values with `insert()` and removing the maximum or minimum value with `remove()`. Both take **O(log n)** time. The other operations exist to support more advanced usage, such as building a priority queue where the "importance" of items can change after they have been added to the queue.
+## 向堆中插入
 
-## 向堆中插入（Inserting into the heap）
-
-下面我们通过一个插入的例子来看一下详细的过程。向堆中插入 `16` 这个值：
-Let's go through an example of insertion to see in details how this works. We will insert the value `16` into this heap:
+下面我们通过一个插入的例子来深入了解这一操作过程。以插入 `16` 为例：
 
 ![The heap before insertion](Images/Heap1.png)
 
-与堆对应的数组是 `[ 10, 7, 2, 5, 1 ]`.
+与之对应的数组是 `[ 10, 7, 2, 5, 1 ]`.
 
 首先将要插入的元素添加至数组末尾，此时数组变为：
-The first step when inserting a new item is to append it to the end of the array. The array becomes:
 
 	[ 10, 7, 2, 5, 1, 16 ]
 
 对应的树如下：
-This corresponds to the following tree:
 
 ![The heap before insertion](Images/Insert1.png)
 
-`(16)` 被添加到了最下面一行的第一个有效位。
-The `(16)` was added to the first available space on the last row.
+`(16)` 被添加到了最后一行的第一个有效位。
 
-不幸时的是，这样堆的属性就被破坏了，因为 `(2)` 排在了 `(16)` 上面，而正确的应该是是大数在小数上面。（这是大序堆）
-Unfortunately, the heap property is no longer satisfied because `(2)` is above `(16)`, and we want higher numbers above lower numbers. (This is a max-heap.)
+如此堆属性被破坏了，因为 `(2)` 排在了 `(16)` 上面，而正确的应该是是大数在小数上面。（这是大序堆）
 
 要恢复堆属性，我们需要将 `(16)` 和 `(2)` 互换。
-To restore the heap property, we swap `(16)` and `(2)`.
 
 ![The heap before insertion](Images/Insert2.png)
 
-还没完，因为 `(10)` 还是比 `(16)` 小。继续将新插入的元素与其父元素进行交换，直至父元素更大或者抵达数的顶端。该（操作）被称为 **shift-up** 或者 **sifting**，每次插入都会被执行。使得哪些比较大或比较小的数沿着树“上浮”。（译者：如果你习惯将树理解为倒置的树冠，这里顶和上浮，就需要理解为根和下沉）
+还没完，因为 `(10)` 还是比 `(16)` 小。继续将其与父元素进行交换，直至父元素更大或者抵达数的顶端。该（操作）被称为 **升档（shift-up）** 或者 **换挡（sifting）**，每次插入都会被执行。使得哪些比较大或比较小的数沿着树“上浮”。
 
-We are not done yet because `(10)` is also smaller than `(16)`. We keep swapping our inserted value with its parent, until the parent is larger or we reach the top of the tree. This is called **shift-up** or **sifting** and is done after every insertion. It makes a number that is too large or too small "float up" the tree.
-
-最终变成这样：
-Finally, we get:
+最终结果如下：
 
 ![The heap before insertion](Images/Insert3.png)
 
-现在每个父节点都比其子节点要大了。（恢复了大序堆的堆属性）
-And now every parent is greater than its children again.
+现在每个父节点都比其子节点要大了。
 
-The time required for shifting up is proportional to the height of the tree, so it takes **O(log n)** time. (The time it takes to append the node to the end of the array is only **O(1)**, so that does not slow it down.)
+由于升档所耗费的时间与树的高度是成正例的，所以它的时间杂度是 **O(log n)**。（向数组末尾添加元素的时间杂度仅仅是 **O(1)**，所以它对总体的时间杂度无影响。）
 
-## 移除根（Removing the root）
+## 移除根
 
-从树中移除 `(10)`： 
-Let's remove `(10)` from this tree:
+从树中移除 `(10)`：
 
 ![The heap before removal](Images/Heap1.png)
 
 空出来的顶点会怎么样呢？
-What happens to the empty spot at the top?
 
 ![The root is gone](Images/Remove1.png)
 
-插入式，我们将新值添加到数组末尾。这次反着来：先获取到最后一个元素，将它放到树的顶端，然后在（逐步）恢复堆属性。
-When inserting, we put the new value at the end of the array. Here, we do the opposite: we take the last object we have, stick it up on top of the tree, and restore the heap property.
+插入时，我们是将新值添加到数组末尾。这次反过来：取到最后一个元素，在将它放到树的顶端，然后在（逐步）恢复堆属性。
 
 ![The last node goes to the root](Images/Remove2.png)
 
-我们来看看怎么对 `(1)` 进行 **降档shift-down**。要会大序堆的堆属性，需要最大的值在顶端。有两个候选交换对象： `(7)` 和 `(2)`。这时选择三个节点中最大的。也就是 `(7)`（进行交换），交换`(1)` 和 `(7)` 后如下图
-
-Let's look at how to **shift-down** `(1)`. To maintain the heap property for this max-heap, we want to the highest number of top. We have two candidates for swapping places with: `(7)` and `(2)`. We choose the highest number between these three nodes to be on top. That is `(7)`, so swapping `(1)` and `(7)` gives us the following tree.
+我们来看看怎么对 `(1)` 进行 **降档（shift-down）**。要恢复大序堆的堆属性，需要最大的值在顶端。此时有两个候选交换对象： `(7)` 和 `(2)`需要交换。选择三个节点中最大的。也就是 `(7)`（进行交换），交换`(1)` 和 `(7)` 后如下图
 
 ![The last node goes to the root](Images/Remove3.png)
 
-继续将挡，直到该节点没有子节点，或者它比其所有子节点都大。对我们这个堆来说，在进行一次交换即可恢复堆属性：
-Keep shifting down until the node does not have any children or it is larger than both its children. For our heap, we only need one more swap to restore the heap property:
+继续将挡，直到该节点没有子节点，或者它比其所有子节点都大。对我们这个堆来说，再进行一次交换即可恢复堆属性：
 
 ![The last node goes to the root](Images/Remove4.png)
 
-升降操作的次数与树的高度是成比例的，其时间杂度是 **O(log n)**。
-The time required for shifting all the way down is proportional to the height of the tree which takes **O(log n)** time.
+升降操作的次数与树的高度是正比的，其时间杂度是 **O(log n)**。
 
-> **Note:** `shiftUp()` and `shiftDown()` can only fix one out-of-place element at a time. If there are multiple elements in the wrong place, you need to call these functions once for each of those elements.
+> **注意：** 无论 `shiftUp()` 还是 `shiftDown()` 一次都只能恢复那些只有一个元素位置错误的（堆）。 如果有多个元素位置错误，那么就需要每个错误元素都调用一次该方法。
 
-## 移除任意节点（Removing any node）
+## 移除任意节点
 
-The vast majority of the time you will be removing the object at the root of the heap because that is what heaps are designed for.
+鉴于堆的设计初衷，大多数时间我们都只是需要移除根元素。
 
-However, it can be useful to remove an arbitrary element. This is a general version of `remove()` and may involve either `shiftDown()` or `shiftUp()`.
+然而，随机移除某个元素也非常有帮助。这个一个通用版的 `remove()`，并且需要调用 `shiftDown()` 或 `shiftUp()` 方法。
 
-Let's take the example tree again and remove `(7)`:
+还是用之前的例子，来移除 `(7)`：
 
 ![The heap before removal](Images/Heap1.png)
 
 初始，数组是这样的：
-As a reminder, the array is:
 
 	[ 10, 7, 2, 5, 1 ]
 
-如你所知，移除一个元素会潜在的破坏大序堆或小序堆属性。要修复这点，我们需要将最后一个元素与我们删除的元素做交换。
-As you know, removing an element could potentially invalidate the max-heap or min-heap property. To fix this, we swap the node that we are removing with the last element:
+如你所知，移除一个元素会潜在的破坏大序堆或小序堆属性。要修复这点，我们需要将最后一个元素与我们即将移除的元素做交换。
 
 	[ 10, 1, 2, 5, 7 ]
 
-此时，最后一个元素正是我们需要返回的；调用 `removeLast()` 方法将其从堆中移除。此时 `(1)` 是不满足堆序的，因为它比它的子节点 `(5)` 小。通过 `shiftDown()` 来修正该问题。
-The last element is the one that we will return; we will call `removeLast()` to remove it from the heap. The `(1)` is now out-of-order because it is smaller than its child, `(5)` but sits higher in the tree. We call `shiftDown()` to repair this.
+最后一个元素是我们需要返回的元素；接下来通过 `removeLast()` 方法将其从堆中移除。此时 `(1)` 因为比它的子节点 `(5)` 小，所以是错序的。通过 `shiftDown()` 来修正。
 
-然而，光降档可不够应对所有情况，还有可能需要升档。试想一下如果从下面的堆中移除 `(5)`。
-However, shifting down is not the only situation we need to handle. It may also happen that the new element must be shifted up. Consider what happens if you remove `(5)` from the following heap:
+然而，光降档可不够应对所有情况，还有可能需要升档。试想一下如果从下面的堆中移除 `(5)`：
 
 ![We need to shift up](Images/Remove5.png)
 
 `(5)` 跟 `(8)` 交换。此时由于 `(8)` 比其父节点要大，所以需要进行 `shiftUp()`。
-Now `(5)` gets swapped with `(8)`. Because `(8)` is larger than its parent, we need to call `shiftUp()`.
 
-## 通过数组创建堆（Creating a heap from an array）
+## 通过数组创建堆
 
 数组转堆很方便，只要将数组中的元素按堆属性进行排序即可。
-It can be convenient to convert an array into a heap. This just shuffles the array elements around until the heap property is satisfied.
 
 代码是如下：
-In code it would look like this:
 
 ```swift
   private mutating func buildHeap(fromArray array: [T]) {
@@ -303,12 +274,11 @@ In code it would look like this:
 ```
 
 只是简单地对数组中的每个元素调用了 `insert()` 方法。简单是简单，但不够效率。由于要对 **n** 个元素逐个执行 **log n** 插入操作，所以它的时间杂度是 **O(n log n)**。
-We simply call `insert()` for each of the values in the array. Simple enough but not very efficient. This takes **O(n log n)** time in total because there are **n** elements and each insertion takes **log n** time.
 
-如果之前的数学光环还在，
+如果前一节的数学光环还在，你就会发现，任何位于数组 *n/2* 到 *n-1* 索引位的堆元素都是树的叶子节点。这部分完全可以跳过，只关注其余节点即可，那怕他们可能是一个或多个子节点的父节点，或者顺序错误。
 If you didn't gloss over the math section, you'd have seen that for any heap the elements at array indices *n/2* to *n-1* are the leaves of the tree. We can simply skip those leaves. We only have to process the other nodes, since they are parents with one or more children and therefore may be in the wrong order.
 
-In code:
+代码：
 
 ```swift
   private mutating func buildHeap(fromArray array: [T]) {
@@ -323,41 +293,39 @@ Here, `elements` is the heap's own array. We walk backwards through this array, 
 
 ## 堆搜索（Searching the heap）
 
-堆就不是为了搜索而建立的，但是如果你想通过 `removeAtIndex()` 随机移除一个元素或者通过 replace()` 随机的修改一个元素，那么就需要先获取该元素的索引。查询就成了必然，虽然比较慢。
-Heaps are not made for fast searches, but if you want to remove an arbitrary element using `removeAtIndex()` or change the value of an element with `replace()`, then you need to obtain the index of that element. Searching is one way to do this, but it is slow.
+堆就不是为了搜索而建立的，但是如果你想通过 `removeAtIndex()` 随机移除一个元素或者通过 `replace()` 随机的修改一个元素，那么就需要先获取该元素的索引。查询也便成了必然，即使很慢。
 
-在[二叉搜索树（binary search tree）](../Binary%20Search%20Tree/)中，由于各节点的的顺序固定，所以快速检索是可以保证的。然而堆节点的顺序是不同的，所以二叉搜索算法（此时）行不通，我们必须遍历树中的每个节点。
-In a [二叉搜索树（binary search tree）](../Binary%20Search%20Tree/), depending on the order of the nodes, a fast search can be guaranteed. Since a heap orders its nodes differently, a binary search will not work, and you need to check every node in the tree.
+在[二叉搜索树（binary search tree）](../Binary%20Search%20Tree/)中，由于节点间固有的顺序特征，所以检索的速度非常快。然而堆节点的排序与之是不同的，所以二叉搜索算法（此时）行不通，我们必须遍历树中的每个节点。
 
-Let's take our example heap again:
+再次以之前的堆为例：
 
 ![The heap](Images/Heap1.png)
 
-If we want to search for the index of node `(1)`, we could just step through the array `[ 10, 7, 2, 5, 1 ]` with a linear search.
+假设我们要查找节点 `(1)` 的索引，此时必须线性搜索遍历整个数组 `[ 10, 7, 2, 5, 1 ]`
 
-Even though the heap property was not conceived with searching in mind, we can still take advantage of it. We know that in a max-heap a parent node is always larger than its children, so we can ignore those children (and their children, and so on...) if the parent is already smaller than the value we are looking for.
+即使堆属性在建立时没有考虑到搜索，但我们还是可以利用到一些它的特点。鉴于大序堆中的父节点总是比其子节点大，因此如果父节点比查找的目标值还小，那么我们就可以忽略其子节点（和子节点的子节点，以及其子子孙孙）
 
-Let's say we want to see if the heap contains the value `8` (it doesn't). We start at the root `(10)`. This is not what we are looking for, so we recursively look at its left and right child. The left child is `(7)`. That is also not what we want, but since this is a max-heap, we know there is no point in looking at the children of `(7)`. They will always be smaller than `7` and are therefore never equal to `8`; likewise, for the right child, `(2)`.
+假设我们要查看堆是否包含数值 `8` (不存在）。首先从根节点 `(10)`开始。根不是，之后递归他的左右子节点。左节点是 `(7)`，不是我们要找的，但鉴于是一个大序堆，所以 `(7)` 的子节点也不用找了。因为他们都比 `7` 小，永远也不可能等于 `8`。同理，右节点的 `(2)`也是如此。
 
-Despite this small optimization, searching is still an **O(n)** operation.
+尽管有些小的优化，但是搜索的时间杂度依然是 **O(n)**。
 
-> **Note:** There is a way to turn lookups into a **O(1)** operation by keeping an additional dictionary that maps node values to indices. This may be worth doing if you often need to call `replace()` to change the "priority" of objects in a [priority queue](../Priority%20Queue/) that's built on a heap.
+> **注意：** 可以用一个额外的字典来保存节点值与其索引的映射关系，如此搜索的时间杂度可以降为 **O(1)**，如果经常需要修改[优先队列（priority queue）](../Priority%20Queue/)中元素的“优先级”，且该优先队列是构建在堆之上的，那么这这么做还是非常值得的。（译者：牺牲空间换取时间）
 
-## The code
+## 代码
 
-See [Heap.swift](Heap.swift) for the implementation of these concepts in Swift. Most of the code is quite straightforward. The only tricky bits are in `shiftUp()` and `shiftDown()`.
+请参见[Heap.swift](Heap.swift)，以了解该概念是如何通过 Swift 实现的。绝大部分代码都非常直观。稍微有点技巧的点在 `shiftUp()` 和 `shiftDown()` 方法中。
 
-You have seen that there are two types of heaps: a max-heap and a min-heap. The only difference between them is in how they order their nodes: largest value first or smallest value first.
+有两种类型的堆：大序堆和小序堆。他们唯一的区别就是排序方式：大值在先还是小值在先。
 
-Rather than create two different versions, `MaxHeap` and `MinHeap`, there is just one `Heap` object and it takes an `isOrderedBefore` closure. This closure contains the logic that determines the order of two values. You have probably seen this before because it is also how Swift's `sort()` works.
+相比于创建两个不同版本的堆，`MaxHeap` 和 `MinHeap`，这里只有一个 `Heap` 对象，只是它还可以接受一个 `isOrderedBefore` 闭包。该闭包包含判断两个值大小的逻辑。可能你很早就接触，因为它也被用在 Swift 的 `sort()` 方法中。
 
-To make a max-heap of integers, you write:
+创建在一个整形的大序堆：
 
 ```swift
 var maxHeap = Heap<Int>(sort: >)
 ```
 
-And to create a min-heap you write:
+创建相应的小序堆:
 
 ```swift
 var minHeap = Heap<Int>(sort: <)
@@ -365,8 +333,10 @@ var minHeap = Heap<Int>(sort: <)
 
 I just wanted to point this out, because where most heap implementations use the `<` and `>` operators to compare values, this one uses the `isOrderedBefore()` closure.
 
-## See also
+## 参见
 
-[Heap on Wikipedia](https://en.wikipedia.org/wiki/Heap_%28data_structure%29)
+[堆_维基百科](https://en.wikipedia.org/wiki/Heap_%28data_structure%29)
 
-*Written for the Swift Algorithm Club by [Kevin Randrup](http://www.github.com/kevinrandrup) and Matthijs Hollemans*
+*由 [Kevin Randrup](http://www.github.com/kevinrandrup) 和 Matthijs Hollemans 联合发表于 Swift 算法社区*
+
+*由 William Han 翻译*
