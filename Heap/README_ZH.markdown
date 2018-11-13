@@ -119,7 +119,7 @@ array[parent(i)] >= array[i]
 
 ## 更多的数学
 
-如果你很好奇，那么这里还有一些公式可以更好的表现堆的属性（特征）。你不需要理解的很透彻，但它有时却真的可以派上用场。该小节可以跳过。
+如果你很好奇，那么这里还有一些公式可以更好的表现堆的属性（特征）。你不需要理解的很透彻，但它有时却真的可以派上用场。该小节可以跳过。(译者：翻译不够好，有待更新，原文暂时保留)
 In case you are curious, here are a few more formulas that describe certain properties of a heap. You do not need to know these by heart, but they come in handy sometimes. Feel free to skip this section!
 
 树的*高度*定义了从根部到最底部的叶子节点所需的跳数，或者更公式化一点说：高度就是节点间的最大边数。*h* 高度 *h* 的堆拥有 *h+1* 层。
@@ -139,50 +139,36 @@ There are at most *ceil(n/2^(h+1))* nodes of height *h* in an *n*-element heap.
 
 叶子节点在数组中的索引范围总是 *floor(n/2)* 到 *n-1*。由此我们可以快速地通过数组来构建一个堆。如有疑问，可以通过例子来验证这一结论。;-)
 
-几个简单的数学知识照亮了你的一天。（译者：这句翻译的不够好。）
+几个简单的数学知识照亮了你的一天。（译者：这句翻译的极差，原文暂时保留。）
 Just a few math facts to brighten your day.
 
-## 可以用堆来做什么呢（What can you do with a heap）？
+## 用堆来做什么呢（What can you do with a heap）？
 
-在插入和移除元素后，有两件基础的事必须要做，以保证堆是一个大序堆或者小序堆。
+在插入或移除元素后，有两个基本操作必须要做，以保证堆是一个有效的大序堆或小序堆：
 
-There are two primitive operations necessary to make sure the heap is a valid max-heap or min-heap after you insert or remove an element:
+- `shiftUp()`: 如果某个元素大于 (大序堆) 或小于 (小序堆) 它的父（节点）, 那么它就需要与父节点进行交换. 使它在整个树中上移。
 
-- `shiftUp()`: 如果某元素大于 (大序堆) 或小于 (小序堆) 它的父（节点）, 它就需要与父节点进行交换. 使它在整个树中上移。
-- `shiftUp()`: If the element is greater (max-heap) or smaller (min-heap) than its parent, it needs to be swapped with the parent. This makes it move up the tree.
+- `shiftDown()`. 如果某个元素小于 (大序堆) 或大于 (小序堆) 它的子节点, 它就需要在整个树中下移。 这一操作也被称为 "堆化（heapify）".
 
-- `shiftDown()`. 如果某元素小于 (max-heap) 或大于 (min-heap) 它的父节点, 它就需要在整个树中下移。 这一操作也被称为 "堆化（heapify）".
-- `shiftDown()`. If the element is smaller (max-heap) or greater (min-heap) than its children, it needs to move down the tree. This operation is also called "heapify".
+上移或下移是个递归程序，其时间复杂度都是 **O(log n)**。
 
-上移或下移的递归时间复杂度都是 **O(log n)**。
-Shifting up or down is a recursive procedure that takes **O(log n)** time.
+下面是一些构建于基础操作之上的操作：
 
-下面是一些构建与基础操作之上的操作：
-Here are other operations that are built on primitive operations:
+- `insert(value)`: 在堆末端添加一个新元素，之后在通过 `shiftUp()` 对堆进行恢复（译者：恢复堆属性，回想下为什么要这么做）
 
-- `insert(value)`: 在堆末端添加一个新元素，之后通过 `shiftUp()` 对堆进行修复.
-- `insert(value)`: Adds the new element to the end of the heap and then uses `shiftUp()` to fix the heap.
+- `remove()`: 移除并返回最大值（大序堆）或最小值（小序堆），会导致堆出现空缺（译者：根位置），要填上这个空位，首先将最后一个元素填补到根的位置，之后在通过 `shiftDown()` 操作来恢复堆属性。（有时该操作也被称为“取小（extract min）”或“取大（extract max）”）
 
-- `remove()`: 移除并返回最大值(大序堆) or 最小值 (小序堆). 要填上由于移除元素而留下的空位，To fill up the hole left by removing the element, the very last element is moved to the root position and then `shiftDown()` fixes up the heap. (This is sometimes called "extract min" or "extract max".)
-- `remove()`: Removes and returns the maximum value (max-heap) or the minimum value (min-heap). To fill up the hole left by removing the element, the very last element is moved to the root position and then `shiftDown()` fixes up the heap. (This is sometimes called "extract min" or "extract max".)
+- `removeAtIndex(index)`: 类似 `remove()`， 区别就在于，除了根元素，它还允许你移除任意堆内其它元素。该（方法）同样会在新晋元素与其子元素顺序错误时或者新晋元素与其父元素顺序错误时调用到 `shiftDown()` 和 `shiftUp()` （方法）。
 
-- `removeAtIndex(index)`: 类似 `remove()`， 区别就在于，除了根元素，还允许你任意移除堆内其它元素。该（方法）同样会在新晋元素与其子元素顺序错误时或者新晋元素与其父元素顺序错误时调用到 `shiftDown()` 和 `shiftUp()` （方法）。
-- `removeAtIndex(index)`: Just like `remove()` with the exception that it allows you to remove any item from the heap, not just the root. This calls both `shiftDown()`, in case the new element is out-of-order with its children, and `shiftUp()`, in case the element is out-of-order with its parents.
+- `replace(index, value)`: 给一个 (小序堆)的节点赋相对更小的值或给一个 (大序堆) 的节点赋相对更大的值时， 由于该操作会破坏堆属性, 所以之后会通过 `shiftUp()` 方法进行恢复（译者：恢复堆的排序属性）. (也称为 "decrease key" 和 "increase key".)
 
-- `replace(index, value)`: 给一个 (小序堆)的节点赋相对更小的值或给一个 (大序堆) 的节点赋相对更大的值时， 由于该操作会破坏堆的排序特征, 所有会通过 `shiftUp()` 方法进行修正（译者：恢复堆的排序属性）. (也称为 "decrease key" 和 "increase key".)
-- `replace(index, value)`: Assigns a smaller (min-heap) or larger (max-heap) value to a node. Because this invalidates the heap property, it uses `shiftUp()` to patch things up. (Also called "decrease key" and "increase key".)
-
-以上所有操作的时间杂度都是 **O(log n)** 因为无论是升档 `shiftUp()` 还是降档 `shiftDown()` 都是昂贵的操作。此外还有一些操作更耗时：
-
-All of the above take time **O(log n)** because shifting up or down is expensive. There are also a few operations that take more time:
+因为无论是升档 `shiftUp()` 还是降档 `shiftDown()` 都是昂贵的操作，所以以上操作的时间杂度都是 **O(log n)** 。此外还有一些操作更耗时：
 
 - `search(value)`. 堆（结构）本身就不是为了高效查询而建立的, 但是因为 `replace()` 和 `removeAtIndex()` 操作需要查询目标节点的索引, 所以不得不如此。 时间杂度: **O(n)**。
-- `search(value)`. Heaps are not built for efficient searches, but the `replace()` and `removeAtIndex()` operations require the array index of the node, so you need to find that index. Time: **O(n)**.
 
 - `buildHeap(array)`: 通过反复调用 `insert()` 方法，将一个（无序）数组转化为堆。如果你做的够好，那么（该方法的）时间杂度应该是 **O(n)**。
-- `buildHeap(array)`: Converts an (unsorted) array into a heap by repeatedly calling `insert()`. If you are smart about this, it can be done in **O(n)** time.
 
-- [堆排（Heap sort）](../Heap%20Sort/). 鉴于堆是一个数组, 我们可以利用这点对其进行从低到高地排序。 时间杂度: **O(n lg n)**。
+- [堆排（Heap sort）](../Heap%20Sort/). 鉴于堆是一个数组, 我们可以利用这一特点对其进行从低到高地排序。 时间杂度: **O(n lg n)**。
 - [Heap sort](../Heap%20Sort/). Since the heap is an array, we can use its unique properties to sort the array from low to high. Time: **O(n lg n).**
 
 堆还有一个  `peek()` 方法，可以返回最大（大序堆）或最小（小序堆）的元素，而无序从堆中移除。时间杂度：**O(1)**。
