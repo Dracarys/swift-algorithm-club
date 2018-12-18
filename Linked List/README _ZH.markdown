@@ -1,8 +1,6 @@
 # 链表（Linked List）
-# Linked List
 
-> 对应的[教程](https://www.raywenderlich.com/144083/swift-algorithm-club-swift-linked-list-data-structure)
-> This topic has been tutorialized [here](https://www.raywenderlich.com/144083/swift-algorithm-club-swift-linked-list-data-structure)
+> 相应[教程](https://www.raywenderlich.com/144083/swift-algorithm-club-swift-linked-list-data-structure)
 
 链表是一连串的数据对象，像数组一样。但与数组不同的是，数组需要在内存中开辟一大块内存用来存储对象，而链表中的对象则是分散存储在内存中，它们通过一条链链接在一起：
 
@@ -30,8 +28,7 @@
 
 对尾部的引用也非常重要，被称为 *tail（尾）*。注意，最后一个节点的“next”指针和首节点的“pevious”指针一样，均为“nil”
 
-## 链表的执行效率（Performance of linked lists）
-## Performance of linked lists
+## 链表的执行效率
 
 对于大多数链表来说，它的时间复杂度都是 **O(n)** 。所以链表通常要比数组慢。但是相对于数组动则就要拷贝整块内存来说，链表的操作更具灵活领，大多仅需要改变几个指针即可。
 
@@ -41,8 +38,7 @@
 
 也就是说，操作链表时，始终应该在前面插入新节点，这一操作的时间杂度是 **O(1)**。相反如果你持有的是链表的 `tail` 指针，那么你应该是中在后面插入新节点。
 
-## 单向 VS 双向链表（Singly vs doubly linked lists）
-## Singly vs doubly linked lists
+## 单向 VS 双向链表
 
 相对于双向链表，由于单向链表无需保存 `previous`指针，所以它消耗的内存更少。
 
@@ -50,15 +46,13 @@
 
 针对大多数应用场景，双向链表更容易一些。
 
-## 为什么采用链表？(Why use a linked list?)
-## Why use a linked list?
+## 为什么采用链表？
 
 链表的一个典型应用场景就是[queue(队列)](../Queue/)。用数组实现的队列，移除前端的一个元素相对缓慢，这是因为你必须先将其他元素出栈。队列就不同了，你只要将 `head` 指向第二个元素即可，操作非常之快。
 
 但是说实话，工作中你几乎没多少机会去实现自己的链表。但是理解链表的原理还是非常有帮助的；其中涉及到的对象链接原理同样适用于[trees(数)](../Tree/) 和 [graphs(图)](../Graph/)
 
-## 代码（The code）
-## The code
+## 代码
 
 我们首先定义一个节点：
 
@@ -544,8 +538,7 @@ f    // [Universe, Swifty]
 
 读者练习：这里实现的 `map()` and `filter()` 不够高效，因为他们都是通过 `append()` 方法向尾端添加新节点。而调用一次添加的时间复杂度是 **O(n)**，每次都要扫描整条链来查找最后一个节点。你能让它更高效一些吗？（提示：试着持有你刚刚添加的那个节点）。
 
-## 替代方案（An alternative approach）
-## An alternative approach
+## 替代方案
 
 目前为止， `LinkedList` 是通过类引用来实现的，这没什么错，但是相对 Swift 中的其它集合诸如`Array` 和 `Dictionary` 而言，显得有些偏重。
 
@@ -565,8 +558,7 @@ enum ListNode<T> {
 [译者：会随着作者的补充进行更新]
 [I might fill out this section in more detail if there's a demand for it.]
 
-## 遵循 Collection 协议（Conforming to the Collection protocol）
-## Conforming to the Collection protocol
+## 遵循 Collection 协议
 
 遵循 Sequence 协议的类型，它所包涵的元素可以被无损地多次遍历，可以通过下标访问，并实现了 Swift 标准库中的 Collection 协议。
 
@@ -635,8 +627,7 @@ public func index(after idx: Index) -> Index {
 }
 ```
 
-## 时刻留意（Some things to keep in mind）
-## Some things to keep in mind
+## 时刻留意
 
 链表灵活性高，但是操作时间杂度是 **O(n)** 。
 
