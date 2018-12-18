@@ -72,4 +72,5 @@ public struct Stack<T> {
 有趣的栈：每次调用函数或方法，CPU都会将返回地址放入栈中。一旦抵达函数结尾，CPU 就会通过返回地址跳回到调用者。这也是为什么当你调用太多函数，例如：无限递归，会导致“栈溢出”，因为 CPU 的栈的空间已经耗尽了。
 
 *由 Matthijs Hollemans 为 Swift 算法社区撰写*
+
 *由 William Han 翻译*
