@@ -15,7 +15,7 @@
 
 ![A binary tree](Images/Operations.png)
 
-## 上码
+## 代码
 
 下面通过 Swift 实现了一个通用二叉树:
 
