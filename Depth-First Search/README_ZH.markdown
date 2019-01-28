@@ -1,31 +1,40 @@
-# Depth-First Search
+# 深度优先搜索（Depth-First Search）
 
-> This topic has been tutorialized [here](https://www.raywenderlich.com/157949/swift-algorithm-club-depth-first-search)
+> 相关教程发表在[这里](https://www.raywenderlich.com/157949/swift-algorithm-club-depth-first-search)
 
-Depth-first search (DFS) is an algorithm for traversing or searching [tree](../Tree/) or [graph](../Graph/) data structures. It starts at a source node and explores as far as possible along each branch before backtracking.
+深度优先搜索(DFS)是遍历或搜索[tree](../Tree/) or [graph](../Graph/)等数据结构的一种算法。从源点开始，在回溯之前尽量遍历较远点的每一个分支。
+Depth-First Search is an algorithm for traversing or searching [tree](../Tree/) or [graph](../Graph/) data structures. It starts at a source node and explores as far as possible along each branch before backtracking.
 
+深度优先搜索既适用于有向图也适用于无向图。
 Depth-first search can be used on both directed and undirected graphs.
 
-## Animated example
+## 动画示例（Animated example）
 
+下面演示了深度优先搜索是如何搜索一个图的：
 Here's how depth-first search works on a graph:
 
 ![Animated example](Images/AnimatedExample.gif)
 
+首先从 `A` 节点开始。我们先寻找该节点的第一个临近节点，并访问它，即示例中的节点 `B`。之后，在查找 `B` 节点的第一个临近节点，并访问它即节点 `D`。至此，`D` 节点已经没有未被访问过的临近节点，此时回溯到节点 `B`并访问它的另一个临近节点 `E`。以此来推，直至访问完图中所有节点。
 Let's say we start the search from node `A`. In depth-first search we look at the starting node's first neighbor and visit that. In the example that is node `B`. Then we look at node `B`'s first neighbor and visit it. This is node `D`. Since `D` doesn't have any unvisited neighbors of its own, we backtrack to node `B` and go to its other neighbor `E`. And so on, until we've visited all the nodes in the graph.
 
+依次防范它的第一个临近节点，直至无法继续，然后在回溯到可继续的那个节点（即存在未被访问的临近节点）。到回溯完所有路径并返回起始节点 `A` 时，搜索完毕。
 Each time we visit the first neighbor and keep going until there's nowhere left to go, and then we backtrack to a point where there are again nodes to visit. When we've backtracked all the way to node `A`, the search is complete.
 
+以上图为例，依次访问的节点顺序为：`A`, `B`, `D`, `E`, `H`, `F`, `G`, `C`。
 For the example, the nodes were visited in the order `A`, `B`, `D`, `E`, `H`, `F`, `G`, `C`.
 
+深度优先搜索的过程也可以以树的形式呈现：
 The depth-first search process can also be visualized as a tree:
 
 ![Traversal tree](Images/TraversalTree.png)
 
+父节点即是那个通过它“发现”该节点的节点。根节是深度优先算法的起始节点。每一个分支都代表一次回溯。
 The parent of a node is the one that "discovered" that node. The root of the tree is the node you started the depth-first search from. Whenever there's a branch, that's where we backtracked.
 
-## The code
+## 代码（The code）
 
+一个用递归实现的深度优先搜索：
 Simple recursive implementation of depth-first search:
 
 ```swift
@@ -42,8 +51,10 @@ func depthFirstSearch(_ graph: Graph, source: Node) -> [String] {
 }
 ```
 
+与[广度优先搜索](../Breadth-First%20Search/)优先访问临近节点不同，深度优先搜索是尽可能地深入访问（树或图）。
 Where a [breadth-first search](../Breadth-First%20Search/) visits all immediate neighbors first, a depth-first search tries to go as deep down the tree or graph as it can.
 
+将下列代码复制到 playground 中尝试一下：
 Put this code in a playground and test it like so:
 
 ```swift
@@ -72,9 +83,17 @@ let nodesExplored = depthFirstSearch(graph, source: nodeA)
 print(nodesExplored)
 ```
 
+输出结果应为：`["a", "b", "d", "e", "h", "f", "g", "c"]`
 This will output: `["a", "b", "d", "e", "h", "f", "g", "c"]`
 
-## What is DFS good for?
+## DFS适用哪些场景呢？（What is DFS good for?）
+
+深度优先搜索可以用来解决很多问题，例如：
+
+* 查找一个？图的连接构成
+* 对图中节点进行[Topological sorting](../Topological%20Sort/)
+* 查询图中的[Bridges](https://en.wikipedia.org/wiki/Bridge_(graph_theory)#Bridge-finding_algorithm)
+* 其它!
 
 Depth-first search can be used to solve many problems, for example:
 
@@ -83,4 +102,10 @@ Depth-first search can be used to solve many problems, for example:
 * Finding bridges of a graph (see: [Bridges](https://en.wikipedia.org/wiki/Bridge_(graph_theory)#Bridge-finding_algorithm))
 * And lots of others!
 
+## 最后（该节待删除，以保持与英文的一致性）
+
+该系列文章翻译自 [Raywenderlich](https://www.raywenderlich.com) 的开源项目：[swift-algorithm-club](https://github.com/raywenderlich/swift-algorithm-club)，意在帮助有一定基础的同学进行回顾，如果你才接触，那么建议移步[详细教程](https://www.raywenderlich.com/157949/swift-algorithm-club-depth-first-search)
+
 *Written for Swift Algorithm Club by Paulo Tanaka and Matthijs Hollemans*
+
+*由 William Han 翻译*
