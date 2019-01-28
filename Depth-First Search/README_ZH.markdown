@@ -2,7 +2,7 @@
 
 > 相关教程发表在[这里](https://www.raywenderlich.com/157949/swift-algorithm-club-depth-first-search)
 
-深度优先搜索(DFS)是遍历或搜索[tree](../Tree/) or [graph](../Graph/)等数据结构的一种算法。从源点开始，在回溯之前尽量遍历较远点的每一个分支。
+深度优先搜索(DFS)是遍历或搜索[tree](../Tree/) or [graph](../Graph/)等数据结构的一种算法。从源点开始，在回溯之前尽量遍历较远的每一个分支。
 Depth-First Search is an algorithm for traversing or searching [tree](../Tree/) or [graph](../Graph/) data structures. It starts at a source node and explores as far as possible along each branch before backtracking.
 
 深度优先搜索既适用于有向图也适用于无向图。
