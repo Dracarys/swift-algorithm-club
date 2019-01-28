@@ -18,15 +18,17 @@ Here's how breadth-first search works on a graph:
 访问过的节点，将其标黑。同时将它的临近节点放入[队列](../Queue/)中。那些已入队但尚未被访问的节点，在动画中用灰色标记。
 When we visit a node, we color it black. We also put its neighbor nodes into a [queue](../Queue/). In the animation the nodes that are enqueued but not visited yet are shown in gray.
 
-
+动画中，首先从`A`节点开始，将其添加到队列中，此时`A`节点变成灰色。
 Let's follow the animated example. We start with the source node `A` and add it to a queue. In the animation this is shown as node `A` becoming gray.
 
 ```swift
 queue.enqueue(A)
 ```
 
+此时队列变成 `[ A ]`。具体到思路是，随着节点的入队，开始访问位于队列前端的节点，同时将其那些尚未被访问的临近节点入队。
 The queue is now `[ A ]`. The idea is that, as long as there are nodes in the queue, we visit the node that's at the front of the queue, and enqueue its immediate neighbor nodes if they have not been visited yet.
 
+在开始遍历图之前，先将起始节点 `A` 出队，并将其标黑。紧接着入队它的两个临近节点 `B` 和 `C`，与此同时将他们标灰。
 To start traversing the graph, we pull the first node off the queue, `A`, and color it black. Then we enqueue its two neighbor nodes `B` and `C`. This colors them gray.
 
 ```swift
@@ -35,6 +37,7 @@ queue.enqueue(B)
 queue.enqueue(C)
 ```
 
+此时队列变为 `[ B, C ]`。接着将 `B` 出队，在将 `B` 的临近节点 `D` 和 `E` 入队。
 The queue is now `[ B, C ]`. We dequeue `B`, and enqueue `B`'s neighbor nodes `D` and `E`.
 
 ```swift
@@ -43,6 +46,7 @@ queue.enqueue(D)
 queue.enqueue(E)
 ```
 
+这是队列变为 `[ C, D, E ]`。之后将 `C`入队，并将 `C` 的临近节点 `F` 和 `G` 入队。
 The queue is now `[ C, D, E ]`. Dequeue `C`, and enqueue `C`'s neighbor nodes `F` and `G`.
 
 ```swift
@@ -51,12 +55,14 @@ queue.enqueue(F)
 queue.enqueue(G)
 ```
 
+此时队列变成了 `[ D, E, F, G ]`。将 `D`，它已经没有（尚未被访问的）临近节点了。
 The queue is now `[ D, E, F, G ]`. Dequeue `D`, which has no neighbor nodes.
 
 ```swift
 queue.dequeue()   // D
 ```
 
+队列变成 `[ E, F, G ]`。
 The queue is now `[ E, F, G ]`. Dequeue `E` and enqueue its single neighbor node `H`. Note that `B` is also a neighbor for `E` but we've already visited `B`, so we're not adding it to the queue again.
 
 ```swift
