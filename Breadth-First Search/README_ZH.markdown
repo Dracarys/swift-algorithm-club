@@ -150,7 +150,7 @@ print(nodesExplored)
 广度优先算法适用范围很广，下面举两个简单的应用：
 
 * 求[最短路径](../Shortest%20Path%20(Unweighted)/)
-* Calculating the [minimum spanning tree](../Minimum%20Spanning%20Tree%20(Unweighted)/) on an unweighted graph.
+* 求一个未加权图的[最小生成树](../Minimum%20Spanning%20Tree%20(Unweighted)/)。
 
 ## 最后（该节待删除，以保持与英文的一致性）
 
