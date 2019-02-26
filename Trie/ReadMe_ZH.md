@@ -21,16 +21,18 @@ Tries are very useful for certain situations. Here are some of the advantages:
 
 * 在典型的查询应用中有更好的时间杂度。
 * 相比于哈希表，`Trie` 不用担心键值碰撞问题
-* 
+* 无需通过哈希即可查询到唯一元素
+* `Trie`结构的字母默认就是有序的
 * Looking up values typically have a better worst-case time complexity.
 * Unlike a hash map, a `Trie` does not need to worry about key collisions.
 * Doesn't utilize hashing to guarantee a unique path to elements.
 * `Trie` structures can be alphabetically ordered by default.
 
-## Common Algorithms
+## 常用算法（Common Algorithms）
 
-### Contains (or any general lookup method)
+### 包含（或者其它常见查询方法）Contains (or any general lookup method)
 
+`Trie` 结构对于查询非常友好，以一个`Trie`英语模型为例，查询一个词只需要少量的指针遍历即可。
 `Trie` structures are great for lookup operations. For `Trie` structures that model the English language, finding a particular word is a matter of a few pointer traversals:
 
 ```swift
@@ -61,14 +63,15 @@ func contains(word: String) -> Bool {
 }
 ```
 
+这个 `contains` 方法相当直观：
 The `contains` method is fairly straightforward:
 
-1. Create a reference to the `root`. This reference will allow you to walk down a chain of nodes.
-2. Keep track of the characters of the word you're trying to match.
-3. Walk the pointer down the nodes.
-4. `isTerminating` is a boolean flag for whether or not this node is the end of a word. If this `if` condition is satisfied, it means you are able to find the word in the `trie`.
+1. 创建一个 `root` 引用。借此便遍历节点。Create a reference to the `root`. This reference will allow you to walk down a chain of nodes.
+2. 保持正常匹配的目标词。Keep track of the characters of the word you're trying to match.
+3. 节点遍历。Walk the pointer down the nodes.
+4. `isTerminating` 是一个布尔标识，指示是否已经抵达词尾。如果该`if`条件被满足，即表明可以在 `trie` 找到该词。`isTerminating` is a boolean flag for whether or not this node is the end of a word. If this `if` condition is satisfied, it means you are able to find the word in the `trie`.
 
-### Insertion
+### 插入（Insertion）
 
 Insertion into a `Trie` requires you to walk over the nodes until you either halt on a node that must be marked as `terminating`, or reach a point where you need to add extra nodes.
 
@@ -139,17 +142,18 @@ func remove(word: String) {
 
 ### Time Complexity
 
+n 表示 `Trie` 中元素个数
 Let n be the length of some value in the `Trie`.
 
-* `contains` - Worst case O(n)
+* `contains` - 最糟糕 O(n)
 * `insert` - O(n)
 * `remove` - O(n)
 
-### Other Notable Operations
+### 其它重要操作Other Notable Operations
 
-* `count`: Returns the number of keys in the `Trie` - O(1)
-* `words`: Returns a list containing all the keys in the `Trie` - O(1)
-* `isEmpty`: Returns `true` if the `Trie` is empty, `false` otherwise - O(1)
+* `count`: 返回 `Trie` 中的键的数量 Returns the number of keys in the `Trie` - O(1)
+* `words`: 返回一个包含所有键的列表Returns a list containing all the keys in the `Trie` - O(1)
+* `isEmpty`: `Trie` 空时返回 `true` 否则 `false` - O(1)
 
 See also [Wikipedia entry for Trie](https://en.wikipedia.org/wiki/Trie).
 
