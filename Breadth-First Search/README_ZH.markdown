@@ -152,9 +152,6 @@ print(nodesExplored)
 * 求[最短路径](../Shortest%20Path%20(Unweighted)/)
 * 求一个未加权图的[最小生成树](../Minimum%20Spanning%20Tree%20(Unweighted)/)。
 
-## 最后（该节待删除，以保持与英文的一致性）
-
-该系列文章翻译自 [Raywenderlich](https://www.raywenderlich.com) 的开源项目：[swift-algorithm-club](https://github.com/raywenderlich/swift-algorithm-club)，意在帮助有一定基础的同学进行回顾，如果你才接触，那么建议移步[详细教程](https://www.raywenderlich.com/155801/swift-algorithm-club-swift-breadth-first-search)
 
 *Written by [Chris Pilcher](https://github.com/chris-pilcher) and Matthijs Hollemans*
 
