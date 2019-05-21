@@ -61,7 +61,7 @@ extension String {
   func indexesOf(ptnr: String) -> [Int]? {
     
     let text = Array(self)
-    let pattern = Array(ptnr.characters)
+    let pattern = Array(ptnr)
     
     let textLength: Int = text.count
     let patternLength: Int = pattern.count
