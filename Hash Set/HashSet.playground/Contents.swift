@@ -44,3 +44,7 @@ difference1.allElements()                // [2, 1]
 
 let difference2 = setB.difference(setA)
 difference2.allElements()                // [5, 6]
+
+
+let setC: HashSet<Int> = [1, 2, 3, 4]
+print(setC)

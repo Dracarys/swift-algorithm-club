@@ -74,3 +74,13 @@ extension HashSet {
         return diff
     }
 }
+
+/* ExpressibleByArrayLiteral */
+
+extension HashSet: ExpressibleByArrayLiteral {
+    public init(arrayLiteral elements: T...) {
+        for element in elements {
+            self.insert(element)
+        }
+    }
+}
