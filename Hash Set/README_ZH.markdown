@@ -1,8 +1,8 @@
-# Hash Set
+# 哈希集合（Hash Set）
 
-A set is a collection of elements that is kind of like an array but with two important differences: the order of the elements in the set is unimportant and each element can appear only once.
+集合（set）是一个类似数组的元素集，但有两点不同：集合内元素是无序的，且仅出现一次。
 
-If the following were arrays, they'd all be different. However, they all represent the same set:
+如果下面展示的是数组，那么它们是不同的，但如果是集合，那么它们就是相同的：
 
 ```swift
 [1 ,2, 3]
@@ -11,30 +11,30 @@ If the following were arrays, they'd all be different. However, they all represe
 [1, 2, 2, 3, 1]
 ```
 
-Because each element can appear only once, it doesn't matter how often you write the element down -- only one of them counts.
+这是因为每个元素仅能出现一次，无论你写入多少次，都仅计入一个。
 
-> **Note:** I often prefer to use sets over arrays when I have a collection of objects but don't care what order they are in. Using a set communicates to the programmer that the order of the elements is unimportant. If you're using an array, then you can't assume the same thing.
+> **注意：** 当集合内元素顺序无关紧要时，我个人更倾向于使用集合而不是数组。通常而言，大多数编程都与元素顺序无关。
 
-Typical operations on a set are:
+集合的一些典型操作：
 
-- insert an element
-- remove an element
-- check whether the set contains an element
-- take the union with another set
-- take the intersection with another set
-- calculate the difference with another set
+- 插入一个元素
+- 移除一个元素
+- 检查是否已经包含某个元素
+- 与另一个集合取并集（Union）
+- 与另一个集合取交集（intersection）
+- 计算与另一个集合的差集（difference，相对补集合）
 
-Union, intersection, and difference are ways to combine two sets into a single one:
+并集，交集，和差集是将两个集合组合成一个集合的几种不同形式：
 
 ![Union, intersection, difference](Images/CombineSets.png)
 
-As of Swift 1.2, the standard library includes a built-in `Set` type but here I'll show how you can make your own. You wouldn't use this in production code, but it's instructive to see how sets are implemented.
+从 Swift 1.2 开始，标准库中内建了一个 `Set` 类型，但这里我将想你展示如何自己构建一个。虽然产品中不会用到，但是它能让你明白集合是怎么实现的。
 
-It's possible to implement a set using a simple array but that's not the most efficient way. Instead, we'll use a dictionary. Since `Swift`'s dictionary is built using a hash table, our own set will be a hash set.
+可以通过一个简单的数组来实现集合，但是那样不够高效。这里我们使用字典。Swift 内建的字典是一个哈希表，那么我们实现的这个集合就是哈希集合了。
 
-## The code
+## 代码
 
-Here are the beginnings of `HashSet` in Swift:
+Swift 实现的初始 `HashSet`：
 
 ```swift
 public struct HashSet<T: Hashable> {
@@ -70,13 +70,13 @@ public struct HashSet<T: Hashable> {
 }
 ```
 
-The code is really very simple because we rely on Swift's built-in `Dictionary` to do all the hard work. The reason we use a dictionary is that dictionary keys must be unique, just like the elements from a set. In addition, a dictionary has **O(1)** time complexity for most of its operations, making this set implementation very fast.
+代码非常简单，这是因为累活都被 Swift 内建的字典干了。之所以选择字典，是因为字典的键也必须是唯一的，跟集合的要求一样。此外，字典的大部分操作都具有 **O(1)** 时间复杂度，如此实现的集合会非常高效。
 
-Because we're using a dictionary, the generic type `T` must conform to `Hashable`. You can put any type of object into our set, as long as it can be hashed. (This is true for Swift's own `Set` too.)
+由于我们使用了字典，那么范型 `T` 就必须遵循 `Hashable` 协议。这样我们就可以想集合中插入任何可哈希的对象。（Swift 内建的 `Set` 也是如此）
 
-Normally, you use a dictionary to associate keys with values, but for a set we only care about the keys. That's why we use `Bool` as the dictionary's value type, even though we only ever set it to `true`, never to `false`. (We could have picked anything here but booleans take up the least space.)
+通常，在字典中将键和值关联起来，但是因为集合只需关注键，所以这里我们使用 `Bool` 作为值的类型。即便如此，也只会将它设置为 `true`，而不是 `false`。（当然选择其它类也可以，但是布尔类型占用的空间是最小的）
 
-Copy the code to a playground and add some tests:
+将代码拷贝到 playground，在添加一些测试代码：
 
 ```swift
 var set = HashSet<String>()
@@ -94,14 +94,11 @@ set.remove("one")
 set.contains("one")    // false
 ```
 
-The `allElements()` function converts the contents of the set into an array. Note that the order of the elements in that array can be different than the order in which you added the items. As I said, a set doesn't care about the order of the elements (and neither does a dictionary).
+`allElements()` 函数会将集合中所有内容转换为一个数组。注意数组中的元素顺序可能与你添加的顺序不同。正如之前提及的，集合内的元素是无序的。（跟字典一样）
 
+## 合并集合（Combining sets）
 
-## Combining sets
-
-A lot of the usefulness of sets is in how you can combine them. (If you've ever used a vector drawing program like Sketch or Illustrator, you'll have seen the Union, Subtract, Intersect options to combine shapes. Same thing.)
-
-Here is the code for the union operation:
+集合的一大用处就是如何合并它们。下面是求并集的代码:
 
 ```swift
 extension HashSet {
@@ -118,9 +115,9 @@ extension HashSet {
 }
 ```
 
-The *union* of two sets creates a new set that consists of all the elements in set A plus all the elements in set B. Of course, if there are duplicate elements they count only once.
+求两个集合的 *并集（union）* 会创建一个新的集合，它包含 A，B 两个集合中的所有元素。当然重复元素仅计入一次。
 
-Example:
+例如:
 
 ```swift
 var setA = HashSet<Int>()
@@ -139,9 +136,9 @@ let union = setA.union(setB)
 union.allElements()           // [5, 6, 2, 3, 1, 4]
 ```
 
-As you can see, the union of the two sets contains all of the elements now. The values `3` and `4` still appear only once, even though they were in both sets.
+如你所见，现在两个集合的并集包含所有元素。`3` 和 `4` 也仅出现一次，即使它们原来各自被包含在两个集合内。
 
-The *intersection* of two sets contains only the elements that they have in common. Here is the code:
+*并集（intersection）*是指两个集合共有的元素。代码如下：
 
 ```swift
 extension HashSet {
@@ -157,16 +154,16 @@ extension HashSet {
 }
 ```
 
-To test it:
+测试一下:
 
 ```swift
 let intersection = setA.intersect(setB)
 intersection.allElements()
 ```
 
-This prints `[3, 4]` because those are the only objects from set A that are also in set B.
+打印结果为 `[3, 4]`，这是一位呢它们集出现在 A 集合，又出现在 B 集合。
 
-Finally, the *difference* between two sets removes the elements they have in common. The code is as follows:
+最后，求*差集（difference）*会移除两个集合共有的元素。代码如下：
 
 ```swift
 extension HashSet {
@@ -182,7 +179,7 @@ extension HashSet {
 }
 ```
 
-It's really the opposite of `intersect()`. Try it out:
+正好与交集 `intersect()` 相反，试一下：
 
 ```swift
 let difference1 = setA.difference(setB)
@@ -192,14 +189,18 @@ let difference2 = setB.difference(setA)
 difference2.allElements()                // [5, 6]
 ```
 
-## Where to go from here?
+## 接下来
 
-If you look at the [documentation](http://swiftdoc.org/v2.1/type/Set/) for Swift's own `Set`, you'll notice it has tons more functionality. An obvious extension would be to make `HashSet` conform to `SequenceType` so that you can iterate it with a `for`...`in` loop.
+如果你看过 Swift 内建 `Set` 的[文档](http://swiftdoc.org/v2.1/type/Set/)，就会注意到它包含由更多的函数。一个最显著的扩展就是让 `HashSet` 遵循 `SequenceType`, 如此就可以通过 `for`...`in` 对集合进行遍历
 
-Another thing you could do is replace the `Dictionary` with an actual [hash table](../Hash%20Table), but one that just stores the keys and doesn't associate them with anything. So you wouldn't need the `Bool` values anymore.
+另一个可以尝试的操作是，用一个真正的[hash table](../Hash%20Table)代替 `Dictionary`，这样只需存储键即可，无需在关联其他，也就不需要 `Bool` 类型的值。
 
-If you often need to look up whether an element belongs to a set and perform unions, then the [union-find](../Union-Find/) data structure may be more suitable. It uses a tree structure instead of a dictionary to make the find and union operations very efficient.
+如果你将长需要查询一个元素是否属于某个集合，以及求交集等操作，那么[union-find](../Union-Find/)这个数据结构可能更合适。它使用一个树来代替字典，让查询和求并集操作更高效。
 
-> **Note:** I'd like to make `HashSet` conform to `ArrayLiteralConvertible` so you can write `let setA: HashSet<Int> = [1, 2, 3, 4]` but currently this crashes the compiler.
+> **注意：** ~~我更倾向于让 `HashSet` 遵从 `ArrayLiteralConvertible`，如此就可以这样写了：`let setA: HashSet<Int> = [1, 2, 3, 4]`，但是目前这样会导致编译器崩溃~~。
 
-*Written for Swift Algorithm Club by Matthijs Hollemans*
+> **注意：** 译者：原来的 `ArrayLiteralConvertible ` 已经被替换为 `ExpressibleByArrayLiteral`，现在已经可以正常使用了。
+
+*由 Matthijs Hollemans 为 Swift 算法合集撰写*
+
+*由 William Han 翻译*
