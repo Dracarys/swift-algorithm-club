@@ -8,7 +8,7 @@ If you're a computer science student who needs to learn this stuff for exams -- 
 
 The goal of this project is to **explain how algorithms work**. The focus is on clarity and readability of the code, not on making a reusable library that you can drop into your own projects. That said, most of the code should be ready for production use but you may need to tweak it to fit into your own codebase.
 
-Code is compatible with **Xcode 9** and **Swift 4**. We'll keep this updated with the latest version of Swift.
+Code is compatible with **Xcode 10** and **Swift 4.2**. We'll keep this updated with the latest version of Swift. If you're interested in a GitHub pages version of the repo, check out [this](https://aquarchitect.github.io/swift-algorithm-club/).
 
 :heart_eyes: **Suggestions and contributions are welcome!** :heart_eyes:
 
@@ -100,7 +100,8 @@ Bad sorting algorithms (don't use these!):
 - [Convex Hull](Convex%20Hull/).
 - [Miller-Rabin Primality Test](Miller-Rabin%20Primality%20Test/). Is the number a prime number?
 - [MinimumCoinChange](MinimumCoinChange/). A showcase for dynamic programming.
-
+- [Genetic](Genetic/). A simple example on how to slowly mutate a value to its ideal form, in the context of biological evolution.
+- [Myers Difference Algorithm](Myers%20Difference%20Algorithm/). Finding the longest common subsequence of two sequences.
 ### Mathematics
 
 - [Greatest Common Divisor (GCD)](GCD/). Special bonus: the least common multiple.
@@ -207,6 +208,7 @@ A lot of software developer interview questions consist of algorithmic puzzles. 
 - [Dining Philosophers](DiningPhilosophers/)
 - [Egg Drop Problem](Egg%20Drop%20Problem/)
 - [Encoding and Decoding Binary Tree](Encode%20and%20Decode%20Tree/)
+- [Closest Pair](Closest%20Pair/)
 
 ## Learn more!
 
