@@ -110,6 +110,7 @@ Bad sorting algorithms (don't use these!):
 - [Karatsuba Multiplication](Karatsuba%20Multiplication/). Another take on elementary multiplication.
 - [Haversine Distance](HaversineDistance/). Calculating the distance between 2 points from a sphere.
 - [Strassen's Multiplication Matrix](Strassen%20Matrix%20Multiplication/). Efficient way to handle matrix multiplication.
+- [CounterClockWise](/CounterClockWise/). Determining the area of a simple polygon.
 
 ### Machine learning
 
@@ -195,6 +196,7 @@ Most of the time using just the built-in `Array`, `Dictionary`, and `Set` types 
 - [Minimum Spanning Tree](Minimum%20Spanning%20Tree/)
 - [All-Pairs Shortest Paths](All-Pairs%20Shortest%20Paths/)
 - [Dijkstra's shortest path algorithm](Dijkstra%20Algorithm/)
+- [A-Star](A-Star/)
 
 ## Puzzles
 

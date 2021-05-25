@@ -24,7 +24,7 @@ extension Vertex: CustomStringConvertible {
 
 extension Vertex: Hashable {
 
-  public func hash(into hasher: inout Hasher) {
+  public func hasher(into hasher: inout Hasher) {
     hasher.combine(data)
     hasher.combine(index)
   }
